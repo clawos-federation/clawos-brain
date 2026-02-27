@@ -1,0 +1,115 @@
+name: Issue to PR Workflow
+
+on:
+  issues:
+    types: [opened, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to process'
+        required: true
+        type: number
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'clawos') || github.event_name == 'workflow_dispatch'
+    outputs:
+      agent_id: ${{ steps.analyze.outputs.agent_id }}
+      priority: ${{ steps.analyze.outputs.priority }}
+      complexity: ${{ steps.analyze.outputs.complexity }}
+
+    steps:
+      - name: Get Issue Info
+        id: issue
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            ISSUE_NUMBER="${{ github.event.inputs.issue_number }}"
+          else
+            ISSUE_NUMBER="${{ github.event.issue.number }}"
+          fi
+          echo "number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: Analyze Issue
+        id: analyze
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUMBER="${{ steps.issue.outputs.number }}"
+          REPO="${{ github.repository }}"
+
+          # Get issue info
+          ISSUE_DATA=$(gh issue view $ISSUE_NUMBER --repo $REPO --json title,body,labels)
+
+          TITLE=$(echo "$ISSUE_DATA" | jq -r '.title')
+          BODY=$(echo "$ISSUE_DATA" | jq -r '.body // empty')
+          LABELS=$(echo "$ISSUE_DATA" | jq -r '[.labels[].name] | join(",")')
+
+          echo "Title: $TITLE"
+          echo "Labels: $LABELS"
+
+          # Determine agent based on labels
+          AGENT_ID="assistant"
+          PRIORITY="medium"
+          COMPLEXITY="medium"
+
+          if echo "$LABELS" | grep -qi "bug\|feature\|enhancement"; then
+            AGENT_ID="coding-pm"
+          elif echo "$LABELS" | grep -qi "doc\|documentation"; then
+            AGENT_ID="writing-pm"
+          elif echo "$LABELS" | grep -qi "research\|investigation"; then
+            AGENT_ID="research-pm"
+          elif echo "$LABELS" | grep -qi "platform\|infrastructure"; then
+            AGENT_ID="platform-pm"
+          fi
+
+          # Estimate complexity from content
+          CONTENT="$TITLE $BODY"
+          if echo "$CONTENT" | grep -qi "simple\|quick\|minor"; then
+            COMPLEXITY="low"
+          elif echo "$CONTENT" | grep -qi "complex\|major\|refactor"; then
+            COMPLEXITY="high"
+          fi
+
+          echo "agent_id=$AGENT_ID" >> $GITHUB_OUTPUT
+          echo "priority=$PRIORITY" >> $GITHUB_OUTPUT
+          echo "complexity=$COMPLEXITY" >> $GITHUB_OUTPUT
+
+      - name: Comment Analysis
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUMBER="${{ steps.issue.outputs.number }}"
+          AGENT="${{ steps.analyze.outputs.agent_id }}"
+          PRIORITY="${{ steps.analyze.outputs.priority }}"
+          COMPLEXITY="${{ steps.analyze.outputs.complexity }}"
+
+          COMMENT="🦞 **ClawOS Issue Analysis**
+
+          | 项目 | 值 |
+          |------|-----|
+          | 分配 Agent | \`$AGENT\` |
+          | 优先级 | $PRIORITY |
+          | 复杂度 | $COMPLEXITY |
+          | 状态 | 🟡 等待处理 |
+
+          ---
+          *此 Issue 已被 ClawOS 识别，等待主节点拉取并执行。*
+          *请在 ClawOS 主节点运行:*
+          \`\`\`bash
+          ~/clawos/scripts/issue-processor.sh $ISSUE_NUMBER ${{ github.repository }}
+          \`\`\`"
+
+          gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "$COMMENT"
+
+  notify:
+    needs: analyze
+    runs-on: ubuntu-latest
+    steps:
+      - name: Summary
+        run: |
+          echo "## Issue Analysis Complete" >> $GITHUB_SUMMARY
+          echo "" >> $GITHUB_SUMMARY
+          echo "- **Agent**: ${{ needs.analyze.outputs.agent_id }}" >> $GITHUB_SUMMARY
+          echo "- **Priority**: ${{ needs.analyze.outputs.priority }}" >> $GITHUB_SUMMARY
+          echo "- **Complexity**: ${{ needs.analyze.outputs.complexity }}" >> $GITHUB_SUMMARY
