@@ -1,0 +1,10 @@
+[
+  {
+    "timestamp": "2026-02-27T09:29:58.402144",
+    "agentId": "coding-pm",
+    "action": "deploy-production",
+    "rule": "no-production-write",
+    "reason": "Action 'deploy-production' forbidden for agent 'coding-pm'",
+    "enforcement": "hard"
+  }
+]

@@ -1,19 +1,60 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-02-25T21:09:00+08:00",
-  
-  "riskLimits": {
-    "dailyLossLimit": 0.02,
-    "singleTradeLimit": 0.05,
-    "manualConfirmThreshold": 10000
-  },
-  
-  "hardRules": [
-    "单笔交易 ≤ 总资产5%",
-    "单日亏损 > 2% 立即停止所有交易",
-    "单笔 > 1万元 必须人工确认",
-    "任何规则不允许被其他Agent覆盖"
+  "lastUpdated": "2026-02-27",
+  "rules": [
+    {
+      "id": "alpha-isolation",
+      "type": "node-restriction",
+      "description": "Alpha executor can only run on quant node",
+      "agents": ["alpha-executor", "risk-controller"],
+      "allowedNodes": ["quant", "alpha-codespace-001"],
+      "enforcement": "hard",
+      "bypassable": false
+    },
+    {
+      "id": "trading-limits",
+      "type": "resource-limit",
+      "description": "Alpha trading risk limits",
+      "agents": ["alpha-executor"],
+      "limits": {
+        "dailyLossLimit": 0.02,
+        "singleTradeLimit": 0.05,
+        "manualConfirmThreshold": 10000
+      },
+      "enforcement": "hard",
+      "bypassable": false
+    },
+    {
+      "id": "disconnect-action",
+      "type": "safety-action",
+      "description": "Auto-stop on disconnect",
+      "agents": ["alpha-executor"],
+      "trigger": "disconnect > 30 minutes",
+      "action": "safe_stop",
+      "enforcement": "hard",
+      "bypassable": false
+    },
+    {
+      "id": "cost-limit",
+      "type": "resource-limit",
+      "description": "Daily token limit per agent",
+      "limits": {
+        "coding-pm": 100000,
+        "writing-pm": 50000,
+        "default": 30000
+      },
+      "enforcement": "soft",
+      "bypassable": true
+    },
+    {
+      "id": "no-production-write",
+      "type": "action-restriction",
+      "description": "Non-production agents cannot deploy",
+      "agents": ["!production-*", "!sreagent"],
+      "forbiddenActions": ["deploy-production", "prod-write"],
+      "enforcement": "hard",
+      "bypassable": false
+    }
   ],
-  
-  "notes": "这些规则只有人可以修改"
+  "immutable": ["alpha-isolation", "trading-limits", "disconnect-action"]
 }
