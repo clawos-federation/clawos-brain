@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-02-25T21:09:00+08:00",
+  
+  "riskLimits": {
+    "dailyLossLimit": 0.02,
+    "singleTradeLimit": 0.05,
+    "manualConfirmThreshold": 10000
+  },
+  
+  "hardRules": [
+    "单笔交易 ≤ 总资产5%",
+    "单日亏损 > 2% 立即停止所有交易",
+    "单笔 > 1万元 必须人工确认",
+    "任何规则不允许被其他Agent覆盖"
+  ],
+  
+  "notes": "这些规则只有人可以修改"
+}

@@ -1,0 +1,22 @@
+{
+  "nodeId": "alpha-codespace-001",
+  "name": "verbose-spork-pj7wqgxpw479cq7x",
+  "type": "codespace",
+  "role": "alpha-bridge",
+  "repository": "openclaw/openclaw",
+  "machine": {
+    "cpus": 2,
+    "memory_gb": 8,
+    "storage_gb": 32
+  },
+  "status": "Available",
+  "created_at": "2026-02-23T11:59:17Z",
+  "last_used_at": "2026-02-25T20:27:58Z",
+  "registered_at": "2026-02-26T00:45:00+08:00",
+  "capabilities": [
+    "quant-analysis",
+    "alpha-reporting",
+    "risk-monitoring"
+  ],
+  "endpoint": "gh codespace ssh -c verbose-spork-pj7wqgxpw479cq7x"
+}

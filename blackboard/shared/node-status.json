@@ -1,0 +1,43 @@
+{
+  "nodes": [
+    {
+      "id": "local-mac-mini",
+      "name": "Mac Mini 主脑",
+      "status": "online",
+      "role": "command",
+      "machine": "Apple Silicon / 16GB",
+      "tailscale_ip": "100.76.189.39",
+      "lastHeartbeat": "2026-02-26T22:20:00+08:00"
+    },
+    {
+      "id": "mobile-macbook",
+      "name": "MacBook 移动节点",
+      "status": "paired",
+      "role": "mobile",
+      "type": "node",
+      "machine": "MacBook",
+      "tailscale_ip": "100.71.170.104",
+      "node_id": "74d5d51d046da50919caaa6dc9bb77321eda7c6d2e90fb8be7a643b565b3865a",
+      "lastHeartbeat": "2026-02-26T22:20:00+08:00"
+    },
+    {
+      "id": "alpha-codespace-001",
+      "name": "Alpha 量化节点",
+      "status": "online",
+      "role": "alpha-bridge",
+      "type": "codespace",
+      "machine": "2vCPU/8GB/32GB",
+      "repository": "openclaw/openclaw",
+      "codespaceName": "verbose-spork-pj7wqgxpw479cq7x",
+      "lastHeartbeat": "2026-02-26T04:27:58+08:00"
+    }
+  ],
+  "topology": {
+    "federation": "clawos-federation",
+    "repositories": 5,
+    "actions": 3,
+    "nodes": 3,
+    "totalMemory": "24GB+"
+  },
+  "lastUpdated": "2026-02-26T22:20:00+08:00"
+}
