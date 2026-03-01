@@ -1,0 +1,70 @@
+{
+  "$schema": "https://docs.openclaw.ai/schemas/skill/v1",
+  "id": "openclaw-agents",
+  "name": "OpenClaw Agents",
+  "version": "1.0.0",
+  "description": "Professional agent routing and execution system supporting DevAgent, LegalAgent, and ResearchAgent",
+  "author": "Zach",
+  "license": "MIT",
+  
+  "entry": {
+    "type": "node",
+    "main": "index.js"
+  },
+  
+  "commands": [
+    {
+      "name": "agent",
+      "description": "Route and execute tasks with professional agents",
+      "usage": "/agent <task> | /agent <agent> <task> | /agent status",
+      "examples": [
+        "/agent 审查服务合同",
+        "/agent dev 创建一个 API",
+        "/agent legal 检查合规性",
+        "/agent status"
+      ]
+    }
+  ],
+  
+  "requirements": {
+    "tools": [
+      "web_search",
+      "web_fetch"
+    ],
+    "workspace": "~/.openclaw/clawos/workspace/agents",
+    "models": {
+      "recommended": [
+        "zai/glm-5",
+        "anthropic/claude-3.5-sonnet",
+        "anthropic/claude-opus-4-5",
+        "openai/gpt-4o"
+      ]
+    }
+  },
+  
+  "capabilities": {
+    "routing": true,
+    "parallelExecution": true,
+    "sequentialExecution": true,
+    "healthMonitoring": true,
+    "bilingualSupport": ["en", "zh"]
+  },
+  
+  "config": {
+    "workspacePath": "~/.openclaw/clawos/workspace/agents",
+    "registryPath": "~/.openclaw/clawos/workspace/agents/registry.json",
+    "logsPath": "~/.openclaw/clawos/workspace/agents/logs"
+  },
+  
+  "permissions": {
+    "exec": false,
+    "read": true,
+    "write": false,
+    "edit": false,
+    "browser": false,
+    "canvas": false,
+    "nodes": false,
+    "cron": false,
+    "sessions": true
+  }
+}

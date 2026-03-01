@@ -1,0 +1,52 @@
+{
+  "federationId": "clawos-federation",
+  "version": "1.0.0",
+  "status": "active",
+  "owner": {
+    "name": "Boss",
+    "role": "掌舵者",
+    "authority": "full",
+    "recoveryContact": "primary"
+  },
+  "binding": "All nodes bound to Boss identity for legal compliance",
+  "recoveryMethod": "All accounts recoverable through owner primary account",
+  "nodes": [
+    {
+      "nodeId": "server",
+      "physicalId": "local-mac-mini",
+      "role": "coordinator",
+      "trustLevel": "trusted"
+    },
+    {
+      "nodeId": "coding",
+      "physicalId": "mobile-macbook",
+      "role": "developer",
+      "trustLevel": "trusted"
+    },
+    {
+      "nodeId": "writing",
+      "physicalId": "mobile-macbook",
+      "role": "content-creator",
+      "trustLevel": "trusted"
+    },
+    {
+      "nodeId": "quant",
+      "physicalId": "alpha-codespace-001",
+      "role": "alpha-trader",
+      "trustLevel": "trusted"
+    }
+  ],
+  "topology": {
+    "type": "federated",
+    "commandNode": "server",
+    "workerNodes": ["coding", "writing", "quant"],
+    "communication": "tailscale"
+  },
+  "governance": {
+    "decisionMaking": "owner-approval",
+    "autonomousOperations": ["routine-tasks", "monitoring", "reporting"],
+    "requiresApproval": ["financial-transactions", "external-deployments", "policy-changes"]
+  },
+  "createdAt": "2026-02-26",
+  "lastUpdated": "2026-02-27"
+}

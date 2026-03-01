@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/worker/creator-writing",
+  "agentVersion": "2026.3",
+  "name": "Creator × Writing",
+  "description": "写作创造Worker，专注于长文写作、结构设计、叙事和论证",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "longFormWriting": true,
+    "structureDesign": true,
+    "storytelling": true,
+    "argumentation": true
+  },
+  "skills": [
+    {
+      "id": "long-form-write",
+      "name": "Long Form Writing",
+      "description": "结构化、逻辑清晰的长篇内容",
+      "tags": ["writing", "content"]
+    },
+    {
+      "id": "structure-design",
+      "name": "Structure Design",
+      "description": "文章框架和叙事节奏",
+      "tags": ["structure", "planning"]
+    },
+    {
+      "id": "storytelling",
+      "name": "Narrative",
+      "description": "引人入胜的故事讲述",
+      "tags": ["narrative", "storytelling"]
+    },
+    {
+      "id": "argumentation",
+      "name": "Argumentation",
+      "description": "有说服力的观点表达",
+      "tags": ["argument", "persuasion"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "server",
+    "tier": "worker",
+    "function": "creator",
+    "domain": "writing"
+  },
+  "memory": {
+    "persistent": false,
+    "blackboardIntegration": true,
+    "maxContextTokens": 8000,
+    "experienceArchive": true
+  },
+  "performance": {
+    "utilityScore": 0.82,
+    "metrics": {
+      "structureIntegrity": 1.0,
+      "logicalCoherence": 0.90,
+      "languageFluency": 0.95
+    },
+    "nominationEligible": true
+  },
+  "status": {
+    "state": "on-demand",
+    "healthEndpoint": "/health/creator-writing"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "receivesFrom": ["writing-pm"]
+  },
+  "sovereignty": {
+    "permanent": false,
+    "lifecycle": "task-based"
+  },
+  "input": {
+    "task": "string",
+    "style": "string",
+    "research": "from analyst",
+    "constraints": "length/format"
+  },
+  "output": {
+    "content": "string",
+    "structure": "outline",
+    "word_count": "number",
+    "draft_version": "number"
+  },
+  "workflow": {
+    "1": "understand → define audience and style",
+    "2": "design → outline + chapter planning",
+    "3": "draft → fast production",
+    "4": "revise → based on Critic feedback"
+  }
+}

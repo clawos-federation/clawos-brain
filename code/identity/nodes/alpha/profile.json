@@ -1,0 +1,35 @@
+{
+  "nodeId": "alpha",
+  "physicalId": "local-mac-mini",
+  "name": "Mac mini Alpha 节点",
+  "role": "quantitative-worker",
+  "device": "Mac mini 16G Apple Silicon",
+  "tailscaleIp": "100.76.189.39",
+  "github": {
+    "account": "clawos-alpha",
+    "repositories": ["openclaw-system"]
+  },
+  "specializations": ["alpha-generation", "backtesting", "signal-processing", "limit-up-prediction"],
+  "trustLevel": "trusted",
+  "tier": "worker",
+  "agents": ["alpha-commander", "risk-controller"],
+  "capabilities": {
+    "localLLM": true,
+    "cloudLLM": true,
+    "quantitative": true,
+    "gitOperations": true
+  },
+  "workingHours": "market-hours",
+  "timezone": "Asia/Shanghai",
+  "createdAt": "2026-02-27",
+  "lastUpdated": "2026-02-27",
+  "oversightNode": "server",
+  "evolutionGoalsSource": "blackboard/evolution-queue/alpha-goals.json",
+  "reportTo": "blackboard/alpha/reports/",
+  "security": {
+    "isolated": true,
+    "allowedCallers": ["localhost:18789"],
+    "riskControllerImmutable": true
+  }
+}
+}

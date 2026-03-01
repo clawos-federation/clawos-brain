@@ -1,0 +1,25 @@
+{
+  "nodeId": "workstation",
+  "physicalId": "macbook-air",
+  "name": "MacBook Air 工作站",
+  "role": "workstation",
+  "device": "MacBook Air",
+  "tailscaleIp": "100.71.170.104",
+  "github": {
+    "account": "clawos-workstation",
+    "repositories": ["openclaw-system"]
+  },
+  "specializations": ["code-generation", "documentation", "writing", "refactoring", "testing"],
+  "trustLevel": "trusted",
+  "tier": "worker",
+  "agents": ["coding-pm", "writing-pm", "code-workers", "writing-workers"],
+  "capabilities": {
+    "localLLM": true,
+    "cloudLLM": true,
+    "browserAutomation": false,
+    "gitOperations": true
+  },
+  "workingHours": "on-demand",
+  "createdAt": "2026-02-27",
+  "lastUpdated": "2026-02-27"
+}

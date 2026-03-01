@@ -1,0 +1,11 @@
+{
+  "@context": ["https://www.w3.org/ns/did/v1"],
+  "id": "did:web:clawos.local:node:workstation",
+  "verificationMethod": [{
+    "id": "did:web:clawos.local:node:workstation#key-1",
+    "type": "Ed25519VerificationKey2020",
+    "controller": "did:web:clawos.local:node:workstation",
+    "publicKeyMultibase": "z6Mkworkstation2026"
+  }],
+  "authentication": ["did:web:clawos.local:node:workstation#key-1"]
+}

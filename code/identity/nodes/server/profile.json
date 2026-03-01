@@ -1,0 +1,37 @@
+{
+  "nodeId": "server",
+  "physicalId": "local-mac-mini",
+  "name": "Mac mini 主脑",
+  "role": "coordinator",
+  "device": "Mac mini 16G Apple Silicon",
+  "tailscaleIp": "100.76.189.39",
+  "github": {
+    "account": "clawos-server",
+    "repositories": ["openclaw-system", "clawos-config"]
+  },
+  "email": {
+    "primary": "clawos.server@gmail.com"
+  },
+  "specializations": ["coordination", "evolution", "alpha-oversight", "knowledge-harvest", "blackboard-management"],
+  "trustLevel": "trusted",
+  "tier": "command",
+  "agents": ["assistant", "gm", "validator", "platform-pm", "coding-pm", "writing-pm"],
+  "capabilities": {
+    "localLLM": true,
+    "cloudLLM": true,
+    "browserAutomation": true,
+    "gitOperations": true
+  },
+  "alphaOversight": {
+    "can_read_alpha_reports": true,
+    "can_set_evolution_goals": true,
+    "can_request_live_trading": true,
+    "requires_human_approval": true,
+    "can_emergency_halt": true,
+    "can_execute_trades": false,
+    "can_override_risk": false
+  },
+  "workingHours": "24/7",
+  "createdAt": "2026-02-26",
+  "lastUpdated": "2026-02-27"
+}

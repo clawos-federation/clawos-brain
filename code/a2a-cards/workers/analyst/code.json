@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/worker/analyst-code",
+  "agentVersion": "2026.3",
+  "name": "Analyst × Code",
+  "description": "代码分析Worker，专注于代码阅读、架构分析、Bug定位和性能分析",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "codeAnalysis": true,
+    "architectureReview": true,
+    "bugDetection": true,
+    "performanceAnalysis": true
+  },
+  "skills": [
+    {
+      "id": "code-read",
+      "name": "Code Reading",
+      "description": "快速理解代码结构和逻辑",
+      "tags": ["analysis", "code"]
+    },
+    {
+      "id": "architecture-analyze",
+      "name": "Architecture Analysis",
+      "description": "识别设计模式和架构问题",
+      "tags": ["architecture", "patterns"]
+    },
+    {
+      "id": "bug-locate",
+      "name": "Bug Location",
+      "description": "追踪问题根因，二分法+日志追踪",
+      "tags": ["debugging", "troubleshooting"]
+    },
+    {
+      "id": "performance-analyze",
+      "name": "Performance Analysis",
+      "description": "发现性能瓶颈，Profiling+热点识别",
+      "tags": ["performance", "optimization"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "coding",
+    "tier": "worker",
+    "function": "analyst",
+    "domain": "code"
+  },
+  "memory": {
+    "persistent": false,
+    "blackboardIntegration": true,
+    "maxContextTokens": 8000
+  },
+  "performance": {
+    "utilityScore": 0.85,
+    "metrics": {
+      "accuracyRate": 0.95,
+      "actionableRate": 1.0,
+      "coverageRate": 0.80
+    },
+    "nominationEligible": true
+  },
+  "status": {
+    "state": "on-demand",
+    "healthEndpoint": "/health/analyst-code"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "receivesFrom": ["coding-pm"]
+  },
+  "sovereignty": {
+    "permanent": false,
+    "lifecycle": "task-based"
+  },
+  "input": {
+    "task": "string",
+    "codebase": "path",
+    "focus": "architecture|bug|performance"
+  },
+  "output": {
+    "findings": "array",
+    "architecture": "description",
+    "issues": "array[{type, location, severity}]",
+    "recommendations": "array"
+  }
+}

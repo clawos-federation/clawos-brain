@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/command/platform-pm",
+  "agentVersion": "2026.3",
+  "name": "Platform PM",
+  "description": "系统进化负责人，维护Agent Registry，同步ClawHub Skills，唯一可修改角色模板的Agent",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": true,
+    "registryManagement": true,
+    "skillDevelopment": true,
+    "systemEvolution": true
+  },
+  "skills": [
+    {
+      "id": "registry-maintain",
+      "name": "Registry Maintenance",
+      "description": "维护agents.json和skills.json注册表",
+      "tags": ["registry", "management"]
+    },
+    {
+      "id": "skill-sync",
+      "name": "Skill Synchronization",
+      "description": "每日浏览ClawHub，VirusTotal检查，隔离测试后加入本地Registry",
+      "tags": ["skills", "security", "integration"]
+    },
+    {
+      "id": "skill-build",
+      "name": "Skill Development",
+      "description": "分析需求，编写SKILL.md，实现脚本，测试验证后部署",
+      "tags": ["development", "skills"]
+    },
+    {
+      "id": "performance-monitor",
+      "name": "Performance Monitoring",
+      "description": "追踪Agent成功率、完成时间、Token消耗，淘汰低效Agent",
+      "tags": ["monitoring", "optimization"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "server",
+    "tier": "command"
+  },
+  "memory": {
+    "persistent": true,
+    "blackboardIntegration": true,
+    "maxContextTokens": 8000
+  },
+  "performance": {
+    "utilityScore": 0.85,
+    "metrics": {
+      "skillIntegrationRate": 0.90,
+      "systemStability": 0.99
+    },
+    "nominationEligible": true
+  },
+  "status": {
+    "state": "active",
+    "healthEndpoint": "/health/platform-pm"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "canSummon": ["github-ops", "sreagent"],
+    "receivesFrom": ["gm"]
+  },
+  "sovereignty": {
+    "permanent": true,
+    "lifecycle": "persistent"
+  },
+  "security": {
+    "virusTotalCheck": true,
+    "isolatedTesting": "~/clawos/sandbox/",
+    "noDirectOpenclawAccess": true
+  }
+}

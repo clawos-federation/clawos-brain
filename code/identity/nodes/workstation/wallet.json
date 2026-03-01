@@ -1,0 +1,11 @@
+{
+  "nodeId": "workstation",
+  "type": "local",
+  "budget": {
+    "dailyLimit": 50000,
+    "monthlyLimit": 1000000,
+    "currency": "tokens"
+  },
+  "permissions": ["read", "write", "spawn", "execute"],
+  "restrictions": []
+}

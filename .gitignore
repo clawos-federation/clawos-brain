@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Sensitive
+.env
+.env.local
+*.pem
+*.key
+credentials/
+
+# ClawOS 运行时数据（不提交）
+blackboard/tasks/*/
+blackboard/federation/results/*.json
+blackboard/federation/heartbeat/*.json
+blackboard/alpha/
+blackboard/gm/*.json
+
+# 备份目录（不提交）
+blackboard-backup-*/
+brain-backup-*/
+code/logs/*.log
+
+# 会话和缓存（不提交）
+code/.sessions/
+code/.cache/
+data/
+
+# 临时文件
+*.tmp
+*.bak

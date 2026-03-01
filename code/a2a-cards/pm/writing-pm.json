@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/pm/writing-pm",
+  "agentVersion": "2026.3",
+  "name": "Writing PM",
+  "description": "写作项目经理，接收写作任务，选择Worker组合，编排调研→创作→审查流程，验收交付",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": true,
+    "workerSelection": true,
+    "workflowOrchestration": true,
+    "contentQualityGate": true
+  },
+  "skills": [
+    {
+      "id": "capability-match",
+      "name": "Capability Matching",
+      "description": "查询capabilities.json，根据任务类型匹配Worker能力",
+      "tags": ["matching", "selection"]
+    },
+    {
+      "id": "worker-orchestrate",
+      "name": "Worker Orchestration",
+      "description": "编排research→writing→review流程",
+      "tags": ["orchestration", "workflow"]
+    },
+    {
+      "id": "quality-gate",
+      "name": "Quality Gate",
+      "description": "确保内容完整性、事实准确性、可读性达标",
+      "tags": ["quality", "review"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "server",
+    "tier": "pm"
+  },
+  "memory": {
+    "persistent": true,
+    "blackboardIntegration": true,
+    "maxContextTokens": 6000
+  },
+  "performance": {
+    "utilityScore": 0.85,
+    "metrics": {
+      "taskCompletionRate": 0.88,
+      "avgQualityScore": 8.2,
+      "avgDeliveryTime": 30
+    },
+    "nominationEligible": true
+  },
+  "status": {
+    "state": "active",
+    "healthEndpoint": "/health/writing-pm"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "canSummon": [
+      "analyst-research",
+      "analyst-writing",
+      "creator-writing",
+      "critic-writing",
+      "connector-research"
+    ],
+    "receivesFrom": ["gm"]
+  },
+  "sovereignty": {
+    "permanent": true,
+    "lifecycle": "persistent"
+  },
+  "workflowPatterns": {
+    "technicalArticle": ["analyst-research", "creator-writing", "critic-writing"],
+    "researchReport": ["analyst-research", "connector-research", "critic-writing"],
+    "marketingCopy": ["analyst-research", "creator-writing", "critic-writing"],
+    "documentation": ["analyst-research", "creator-writing"]
+  },
+  "lengthLimits": {
+    "researchSummary": 3000,
+    "draft": "variable",
+    "finalReport": 5000
+  },
+  "restrictions": {
+    "noDirectWriting": true,
+    "noSkipReview": true,
+    "maxParallelWorkers": 3
+  }
+}

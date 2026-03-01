@@ -1,0 +1,101 @@
+{
+  "@context": "https://clawos.local/schemas/trust-registry/v1",
+  "name": "ClawOS Node Trust Registry",
+  "description": "Trust relationships between ClawOS federation nodes",
+  "version": "1.0.0",
+  "created": "2026-02-27T01:16:53.131503+00:00",
+  "updated": "2026-02-27T01:16:53.131505+00:00",
+  "nodes": [
+    {
+      "did": "did:web:clawos.local:server",
+      "name": "server",
+      "role": "orchestrator",
+      "trusted_by": [
+        "did:web:clawos.local:coding",
+        "did:web:clawos.local:writing",
+        "did:web:clawos.local:quant"
+      ],
+      "capabilities": [
+        "orchestration",
+        "task-dispatch",
+        "monitoring",
+        "federation"
+      ],
+      "status": "active",
+      "registered": "2026-02-27T01:16:53.131509+00:00"
+    },
+    {
+      "did": "did:web:clawos.local:coding",
+      "name": "coding",
+      "role": "worker",
+      "trusted_by": [
+        "did:web:clawos.local:server",
+        "did:web:clawos.local:writing",
+        "did:web:clawos.local:quant"
+      ],
+      "capabilities": [
+        "code-generation",
+        "refactoring",
+        "testing",
+        "debugging"
+      ],
+      "status": "active",
+      "registered": "2026-02-27T01:16:53.131512+00:00"
+    },
+    {
+      "did": "did:web:clawos.local:writing",
+      "name": "writing",
+      "role": "worker",
+      "trusted_by": [
+        "did:web:clawos.local:server",
+        "did:web:clawos.local:coding",
+        "did:web:clawos.local:quant"
+      ],
+      "capabilities": [
+        "content-creation",
+        "documentation",
+        "translation",
+        "editing"
+      ],
+      "status": "active",
+      "registered": "2026-02-27T01:16:53.131514+00:00"
+    },
+    {
+      "did": "did:web:clawos.local:quant",
+      "name": "quant",
+      "role": "worker",
+      "trusted_by": [
+        "did:web:clawos.local:server",
+        "did:web:clawos.local:coding",
+        "did:web:clawos.local:writing"
+      ],
+      "capabilities": [
+        "backtesting",
+        "signal-generation",
+        "risk-analysis",
+        "market-data"
+      ],
+      "status": "active",
+      "registered": "2026-02-27T01:16:53.131516+00:00"
+    }
+  ],
+  "trust_policies": [
+    {
+      "id": "default-trust",
+      "name": "Default Trust Policy",
+      "description": "All ClawOS nodes trust each other by default",
+      "rules": [
+        {
+          "type": "mutual_trust",
+          "scope": "federation",
+          "permissions": [
+            "authenticate",
+            "delegate",
+            "query"
+          ]
+        }
+      ]
+    }
+  ],
+  "delegation_chains": []
+}

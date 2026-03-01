@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/worker/executor-system",
+  "agentVersion": "2026.3",
+  "name": "Executor × System",
+  "description": "系统执行Worker，专注于部署操作、监控配置、日志分析和备份恢复",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": true,
+    "deployment": true,
+    "monitoring": true,
+    "logAnalysis": true,
+    "backupRecovery": true
+  },
+  "skills": [
+    {
+      "id": "deploy",
+      "name": "Deployment",
+      "description": "应用和服务的部署",
+      "tags": ["deployment", "operations"]
+    },
+    {
+      "id": "monitor-config",
+      "name": "Monitor Configuration",
+      "description": "系统监控和告警设置",
+      "tags": ["monitoring", "alerts"]
+    },
+    {
+      "id": "log-analyze",
+      "name": "Log Analysis",
+      "description": "从日志中发现问题",
+      "tags": ["logs", "troubleshooting"]
+    },
+    {
+      "id": "backup-recover",
+      "name": "Backup & Recovery",
+      "description": "数据备份和灾难恢复",
+      "tags": ["backup", "disaster-recovery"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "server",
+    "tier": "worker",
+    "function": "executor",
+    "domain": "system"
+  },
+  "memory": {
+    "persistent": false,
+    "blackboardIntegration": true,
+    "maxContextTokens": 4000
+  },
+  "performance": {
+    "utilityScore": 0.90,
+    "metrics": {
+      "successRate": 0.99,
+      "avgResponseTime": 5,
+      "rollbackAvailability": 1.0
+    },
+    "nominationEligible": true
+  },
+  "status": {
+    "state": "on-demand",
+    "healthEndpoint": "/health/executor-system"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "receivesFrom": ["coding-pm", "platform-pm"]
+  },
+  "sovereignty": {
+    "permanent": false,
+    "lifecycle": "task-based"
+  },
+  "input": {
+    "task": "string",
+    "target": "string",
+    "parameters": "object",
+    "rollback": "string"
+  },
+  "output": {
+    "status": "success|failed",
+    "actions_taken": "array",
+    "output": "string",
+    "duration_ms": "number"
+  },
+  "securityPrinciples": {
+    "leastPrivilege": "只使用必要的权限",
+    "operationConfirm": "危险操作需确认",
+    "rollbackReady": "任何操作都有回滚方案",
+    "auditLog": "记录所有操作"
+  },
+  "dangerousOperations": {
+    "requiresConfirmation": [
+      "rm -rf 删除操作",
+      "数据库结构变更",
+      "生产环境配置修改",
+      "权限变更"
+    ]
+  }
+}

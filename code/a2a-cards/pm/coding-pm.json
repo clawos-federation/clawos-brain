@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/pm/coding-pm",
+  "agentVersion": "2026.3",
+  "name": "Coding PM",
+  "description": "开发项目经理，接收开发任务，查询能力索引，选择Worker组合，编排流程，验收交付",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": true,
+    "workerSelection": true,
+    "workflowOrchestration": true,
+    "codeQualityGate": true
+  },
+  "skills": [
+    {
+      "id": "capability-match",
+      "name": "Capability Matching",
+      "description": "查询capabilities.json，根据任务类型匹配Worker能力",
+      "tags": ["matching", "selection"]
+    },
+    {
+      "id": "worker-orchestrate",
+      "name": "Worker Orchestration",
+      "description": "编排analyst→creator→critic→executor流程",
+      "tags": ["orchestration", "workflow"]
+    },
+    {
+      "id": "quality-gate",
+      "name": "Quality Gate",
+      "description": "critic-code >= 8分，测试覆盖 >= 80%，Lint 0 errors",
+      "tags": ["quality", "testing"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "server",
+    "tier": "pm"
+  },
+  "memory": {
+    "persistent": true,
+    "blackboardIntegration": true,
+    "maxContextTokens": 6000
+  },
+  "performance": {
+    "utilityScore": 0.88,
+    "metrics": {
+      "taskCompletionRate": 0.90,
+      "avgQualityScore": 8.5,
+      "avgDeliveryTime": 45
+    },
+    "nominationEligible": true
+  },
+  "status": {
+    "state": "active",
+    "healthEndpoint": "/health/coding-pm"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "canSummon": [
+      "analyst-code",
+      "analyst-frontend",
+      "analyst-backend",
+      "creator-code",
+      "creator-frontend",
+      "creator-backend",
+      "critic-code",
+      "executor-test"
+    ],
+    "receivesFrom": ["gm"]
+  },
+  "sovereignty": {
+    "permanent": true,
+    "lifecycle": "persistent"
+  },
+  "workflowPatterns": {
+    "newFeature": ["analyst-code", "creator-code", "critic-code"],
+    "bugFix": ["analyst-code", "creator-code", "executor-test"],
+    "refactor": ["analyst-code", "creator-code", "critic-code"],
+    "performance": ["analyst-code", "creator-code", "critic-code"]
+  },
+  "restrictions": {
+    "noDirectCoding": true,
+    "noSkipReview": true,
+    "maxParallelWorkers": 3,
+    "noUntestedCode": true
+  }
+}

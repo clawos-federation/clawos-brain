@@ -1,0 +1,11 @@
+{
+  "@context": ["https://www.w3.org/ns/did/v1"],
+  "id": "did:web:clawos.local:node:alpha",
+  "verificationMethod": [{
+    "id": "did:web:clawos.local:node:alpha#key-1",
+    "type": "Ed25519VerificationKey2020",
+    "controller": "did:web:clawos.local:node:alpha",
+    "publicKeyMultibase": "z6Mkalpha2026"
+  }],
+  "authentication": ["did:web:clawos.local:node:alpha#key-1"]
+}

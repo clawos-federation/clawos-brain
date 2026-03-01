@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/command/gm",
+  "agentVersion": "2026.3",
+  "name": "General Manager",
+  "description": "全局决策中枢，评估任务复杂度和资源需求，任命合适的PM，最终验收交付物",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": true,
+    "taskEvaluation": true,
+    "pmAppointment": true,
+    "finalValidation": true
+  },
+  "skills": [
+    {
+      "id": "task-evaluate",
+      "name": "Task Evaluation",
+      "description": "评估任务复杂度、资源需求和优先级",
+      "tags": ["planning", "coordination", "analysis"]
+    },
+    {
+      "id": "pm-select",
+      "name": "PM Selection",
+      "description": "根据任务类型选择合适的PM（coding/writing/research）",
+      "tags": ["routing", "matching"]
+    },
+    {
+      "id": "acceptance",
+      "name": "Final Acceptance",
+      "description": "最终验收PM提交的交付物",
+      "tags": ["validation", "quality"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "server",
+    "tier": "command"
+  },
+  "memory": {
+    "persistent": true,
+    "blackboardIntegration": true,
+    "maxContextTokens": 5000
+  },
+  "performance": {
+    "utilityScore": 0.85,
+    "metrics": {
+      "taskCompletionRate": 0.92,
+      "avgQualityScore": 8.5
+    },
+    "nominationEligible": true
+  },
+  "status": {
+    "state": "active",
+    "healthEndpoint": "/health/gm"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "canSummon": ["coding-pm", "writing-pm", "research-pm", "platform-pm"],
+    "receivesFrom": ["assistant"]
+  },
+  "sovereignty": {
+    "permanent": true,
+    "lifecycle": "persistent"
+  }
+}

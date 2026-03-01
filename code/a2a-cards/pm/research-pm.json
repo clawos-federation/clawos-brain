@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/pm/research-pm",
+  "agentVersion": "2026.3",
+  "name": "Research PM",
+  "description": "研究项目经理，接收调研任务，选择Worker组合，编排分析→整合流程，输出简洁报告",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": true,
+    "workerSelection": true,
+    "workflowOrchestration": true,
+    "reportGeneration": true
+  },
+  "skills": [
+    {
+      "id": "capability-match",
+      "name": "Capability Matching",
+      "description": "查询capabilities.json，匹配research domain的Worker",
+      "tags": ["matching", "selection"]
+    },
+    {
+      "id": "worker-orchestrate",
+      "name": "Worker Orchestration",
+      "description": "编排research→connector→(可选)critic流程",
+      "tags": ["orchestration", "workflow"]
+    },
+    {
+      "id": "concise-report",
+      "name": "Concise Reporting",
+      "description": "输出<3k tokens的简洁报告，核心发现3-5点",
+      "tags": ["reporting", "summary"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "server",
+    "tier": "pm"
+  },
+  "memory": {
+    "persistent": true,
+    "blackboardIntegration": true,
+    "maxContextTokens": 5000
+  },
+  "performance": {
+    "utilityScore": 0.82,
+    "metrics": {
+      "taskCompletionRate": 0.90,
+      "avgQualityScore": 8.0,
+      "avgDeliveryTime": 20
+    },
+    "nominationEligible": true
+  },
+  "status": {
+    "state": "active",
+    "healthEndpoint": "/health/research-pm"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "canSummon": [
+      "analyst-research",
+      "connector-research",
+      "critic-research"
+    ],
+    "receivesFrom": ["gm"]
+  },
+  "sovereignty": {
+    "permanent": true,
+    "lifecycle": "persistent"
+  },
+  "workflowPatterns": {
+    "infoCollection": ["analyst-research", "connector-research"],
+    "deepResearch": ["analyst-research", "connector-research", "critic-research"],
+    "systemStatus": ["analyst-research", "connector-research"],
+    "trendAnalysis": ["analyst-research", "connector-research"]
+  },
+  "outputFormat": {
+    "maxLength": 3000,
+    "coreFindings": "3-5 points, each <50 chars",
+    "dataSummary": "max 5 rows",
+    "recommendations": "2-3 items, each <30 chars"
+  },
+  "restrictions": {
+    "noCodeDevelopment": true,
+    "noContentCreation": true,
+    "noProductionDeployment": true,
+    "noDirectUserInteraction": true
+  }
+}

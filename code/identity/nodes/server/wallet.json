@@ -1,0 +1,33 @@
+{
+  "nodeId": "server",
+  "version": "1.0.0",
+  "type": "local",
+  "status": "active",
+  "address": null,
+  "keys": {
+    "signing": {
+      "publicKey": null,
+      "algorithm": "Ed25519",
+      "created": null,
+      "note": "To be generated in Phase 1.1"
+    },
+    "encryption": {
+      "publicKey": null,
+      "algorithm": "X25519",
+      "created": null,
+      "note": "To be generated in Phase 1.1"
+    }
+  },
+  "budget": {
+    "monthlyLimit": 100.00,
+    "currentBalance": null,
+    "currency": "USD",
+    "allocatedFor": ["API costs", "Cloud LLM usage", "GitHub Actions minutes"]
+  },
+  "permissions": {
+    "canSpend": true,
+    "requiresApproval": false,
+    "maxSingleTransaction": 50.00
+  },
+  "note": "Local-first, no blockchain integration yet. Primary coordinator node with higher budget."
+}

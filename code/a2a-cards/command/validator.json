@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/command/validator",
+  "agentVersion": "2026.3",
+  "name": "Validator",
+  "description": "独立质检Agent，从四个维度评分，低于8分打回，永远不主动联系任何人",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "qualityAssessment": true,
+    "multiDimensionScoring": true,
+    "independentReview": true
+  },
+  "skills": [
+    {
+      "id": "quality-assess",
+      "name": "Quality Assessment",
+      "description": "从准确性、完整性、质量、规范四个维度评估",
+      "tags": ["review", "scoring", "quality"]
+    },
+    {
+      "id": "score-report",
+      "name": "Score Reporting",
+      "description": "输出结构化评分报告，低于8分标注问题",
+      "tags": ["reporting", "feedback"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "server",
+    "tier": "command"
+  },
+  "memory": {
+    "persistent": false,
+    "blackboardIntegration": true,
+    "maxContextTokens": 4000
+  },
+  "performance": {
+    "utilityScore": 0.88,
+    "metrics": {
+      "assessmentAccuracy": 0.92,
+      "avgAssessmentTime": 30
+    },
+    "nominationEligible": false
+  },
+  "status": {
+    "state": "active",
+    "healthEndpoint": "/health/validator"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "canSummon": [],
+    "receivesFrom": ["gm"]
+  },
+  "sovereignty": {
+    "permanent": true,
+    "lifecycle": "persistent"
+  },
+  "scoringCriteria": {
+    "dimensions": {
+      "accuracy": 25,
+      "completeness": 25,
+      "quality": 25,
+      "compliance": 25
+    },
+    "passThreshold": 8.0
+  },
+  "restrictions": {
+    "noProactiveContact": true,
+    "readOnly": true,
+    "noModification": true
+  }
+}

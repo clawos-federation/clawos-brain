@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/worker/creator-code",
+  "agentVersion": "2026.3",
+  "name": "Creator × Code",
+  "description": "代码创造Worker，专注于代码生成、API设计、算法实现和重构",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "codeGeneration": true,
+    "apiDesign": true,
+    "algorithmImplementation": true,
+    "refactoring": true
+  },
+  "skills": [
+    {
+      "id": "code-generate",
+      "name": "Code Generation",
+      "description": "高质量、可维护的代码实现",
+      "tags": ["coding", "implementation"]
+    },
+    {
+      "id": "api-design",
+      "name": "API Design",
+      "description": "清晰、一致的接口设计",
+      "tags": ["api", "design"]
+    },
+    {
+      "id": "algorithm-implement",
+      "name": "Algorithm Implementation",
+      "description": "高效、正确的算法编码",
+      "tags": ["algorithms", "coding"]
+    },
+    {
+      "id": "refactor",
+      "name": "Refactoring",
+      "description": "改善代码结构而不改变行为",
+      "tags": ["refactoring", "clean-code"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "coding",
+    "tier": "worker",
+    "function": "creator",
+    "domain": "code"
+  },
+  "memory": {
+    "persistent": false,
+    "blackboardIntegration": true,
+    "maxContextTokens": 10000
+  },
+  "performance": {
+    "utilityScore": 0.88,
+    "metrics": {
+      "testCoverage": 0.80,
+      "styleCompliance": 1.0,
+      "bugFreeRate": 0.95
+    },
+    "nominationEligible": true
+  },
+  "status": {
+    "state": "on-demand",
+    "healthEndpoint": "/health/creator-code"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "receivesFrom": ["coding-pm"]
+  },
+  "sovereignty": {
+    "permanent": false,
+    "lifecycle": "task-based"
+  },
+  "input": {
+    "task": "string",
+    "spec": "string",
+    "analysis": "from analyst",
+    "constraints": "tech-stack/limits"
+  },
+  "output": {
+    "files_changed": "array",
+    "implementation": "description",
+    "tests_added": "array",
+    "breaking_changes": "array"
+  },
+  "principles": {
+    "DRY": true,
+    "SOLID": true,
+    "testFirst": true,
+    "docSync": true
+  }
+}

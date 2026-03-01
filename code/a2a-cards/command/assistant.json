@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/command/assistant",
+  "agentVersion": "2026.3",
+  "name": "Assistant",
+  "description": "唯一移动端人机入口，3秒确认收到，转交GM，通过Heartbeat主动推送进度",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": true,
+    "taskReception": true,
+    "heartbeatReporting": true,
+    "multiLanguage": true
+  },
+  "skills": [
+    {
+      "id": "intent-receive",
+      "name": "Intent Reception",
+      "description": "接收用户意图，必要时澄清，中文回复",
+      "tags": ["communication", "clarification"]
+    },
+    {
+      "id": "task-forward",
+      "name": "Task Forwarding",
+      "description": "将任务写入inbox转交给GM",
+      "tags": ["routing", "delegation"]
+    },
+    {
+      "id": "progress-report",
+      "name": "Progress Reporting",
+      "description": "通过Heartbeat主动推送进度，不等用户来问",
+      "tags": ["notification", "tracking"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "server",
+    "tier": "command"
+  },
+  "memory": {
+    "persistent": true,
+    "blackboardIntegration": true,
+    "maxContextTokens": 3000
+  },
+  "performance": {
+    "utilityScore": 0.90,
+    "metrics": {
+      "responseTime": 3,
+      "userSatisfaction": 0.95
+    },
+    "nominationEligible": false
+  },
+  "status": {
+    "state": "active",
+    "healthEndpoint": "/health/assistant"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "canSummon": ["gm"],
+    "receivesFrom": ["user"]
+  },
+  "sovereignty": {
+    "permanent": true,
+    "lifecycle": "persistent"
+  },
+  "restrictions": {
+    "noTechnicalTasks": true,
+    "noShellCommands": ["rm", "curl", "wget", "git"],
+    "noDirectWorkerContact": true
+  }
+}

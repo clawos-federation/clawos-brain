@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/worker/critic-code",
+  "agentVersion": "2026.3",
+  "name": "Critic × Code",
+  "description": "代码评审Worker，专注于代码审查、安全分析、性能优化和测试策略评估",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "codeReview": true,
+    "securityAnalysis": true,
+    "performanceOptimization": true,
+    "testStrategy": true
+  },
+  "skills": [
+    {
+      "id": "code-review",
+      "name": "Code Review",
+      "description": "发现代码问题和潜在Bug",
+      "tags": ["review", "quality"]
+    },
+    {
+      "id": "security-analyze",
+      "name": "Security Analysis",
+      "description": "识别安全漏洞",
+      "tags": ["security", "audit"]
+    },
+    {
+      "id": "performance-optimize",
+      "name": "Performance Optimization",
+      "description": "发现性能问题并提供建议",
+      "tags": ["performance", "optimization"]
+    },
+    {
+      "id": "test-strategy",
+      "name": "Test Strategy",
+      "description": "评估测试覆盖和有效性",
+      "tags": ["testing", "coverage"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "coding",
+    "tier": "worker",
+    "function": "critic",
+    "domain": "code"
+  },
+  "memory": {
+    "persistent": false,
+    "blackboardIntegration": true,
+    "maxContextTokens": 6000
+  },
+  "performance": {
+    "utilityScore": 0.88,
+    "metrics": {
+      "issueDetectionRate": 0.95,
+      "falsePositiveRate": 0.10,
+      "actionableRate": 1.0
+    },
+    "nominationEligible": true
+  },
+  "status": {
+    "state": "on-demand",
+    "healthEndpoint": "/health/critic-code"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "receivesFrom": ["coding-pm"]
+  },
+  "sovereignty": {
+    "permanent": false,
+    "lifecycle": "task-based"
+  },
+  "input": {
+    "task": "string",
+    "code_changes": "diff",
+    "focus": "security|performance|style"
+  },
+  "output": {
+    "score": "number",
+    "pass": "boolean",
+    "issues": "array[{file, line, type, message, suggestion}]",
+    "positive": "array"
+  },
+  "checklist": {
+    "functionality": "代码是否实现了预期功能",
+    "security": "是否有注入/泄露风险",
+    "performance": "是否有明显的性能问题",
+    "maintainability": "代码是否易于理解和修改",
+    "testing": "是否有足够的测试覆盖"
+  },
+  "scoringScale": {
+    "9-10": "优秀，可直接合并",
+    "7-8": "良好，小修改后可合并",
+    "5-6": "及格，需要修改",
+    "<5": "不通过，需要重做"
+  }
+}

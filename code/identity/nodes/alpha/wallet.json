@@ -1,0 +1,11 @@
+{
+  "nodeId": "alpha",
+  "type": "local",
+  "budget": {
+    "dailyLimit": 30000,
+    "monthlyLimit": 500000,
+    "currency": "tokens"
+  },
+  "permissions": ["read", "execute", "alpha-operations"],
+  "restrictions": ["no-production-deploy"]
+}

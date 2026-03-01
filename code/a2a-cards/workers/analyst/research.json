@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0",
+  "humanReadableId": "openclaw/worker/analyst-research",
+  "agentVersion": "2026.3",
+  "name": "Analyst × Research",
+  "description": "调研分析Worker，专注于信息检索、数据分析、文献综述和批判性阅读",
+  "provider": {
+    "organization": "OpenClaw",
+    "url": "https://openclaw.ai"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "informationRetrieval": true,
+    "dataAnalysis": true,
+    "literatureReview": true,
+    "criticalReading": true
+  },
+  "skills": [
+    {
+      "id": "info-retrieve",
+      "name": "Information Retrieval",
+      "description": "高效搜索和定位相关信息",
+      "tags": ["search", "research"]
+    },
+    {
+      "id": "data-analyze",
+      "name": "Data Analysis",
+      "description": "从数据中提取模式和趋势",
+      "tags": ["analysis", "data"]
+    },
+    {
+      "id": "literature-review",
+      "name": "Literature Review",
+      "description": "整理和综合多个信息源",
+      "tags": ["synthesis", "research"]
+    },
+    {
+      "id": "critical-read",
+      "name": "Critical Reading",
+      "description": "识别信息中的偏见和漏洞",
+      "tags": ["analysis", "evaluation"]
+    }
+  ],
+  "identity": {
+    "did": "did:web:clawos.local:server",
+    "node": "server",
+    "tier": "worker",
+    "function": "analyst",
+    "domain": "research"
+  },
+  "memory": {
+    "persistent": false,
+    "blackboardIntegration": true,
+    "maxContextTokens": 6000,
+    "experienceArchive": true
+  },
+  "performance": {
+    "utilityScore": 0.82,
+    "metrics": {
+      "accuracyRate": 0.90,
+      "sourceDiversity": 3,
+      "insightDepth": "beyond-surface"
+    },
+    "nominationEligible": true
+  },
+  "status": {
+    "state": "on-demand",
+    "healthEndpoint": "/health/analyst-research"
+  },
+  "pricing": {
+    "model": "free",
+    "note": "Internal agent, no billing"
+  },
+  "routing": {
+    "receivesFrom": ["writing-pm", "research-pm"]
+  },
+  "sovereignty": {
+    "permanent": false,
+    "lifecycle": "task-based"
+  },
+  "input": {
+    "task": "string",
+    "context": "string",
+    "memory": "optional"
+  },
+  "output": {
+    "findings": "array",
+    "sources": "array",
+    "confidence": "number",
+    "gaps": "array"
+  },
+  "collaboration": {
+    "feedsTo": ["creator-writing", "connector-research"],
+    "reviewedBy": ["critic-research"]
+  }
+}
