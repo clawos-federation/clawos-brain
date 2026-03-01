@@ -1,0 +1,30 @@
+{
+  "name": "Browser Sandbox",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {}
+  },
+  
+  "postCreateCommand": "pip install playwright && playwright install chromium firefox",
+  
+  "hostRequirements": {
+    "autoShutdown": "30m",
+    "cpus": 2,
+    "memory": "8gb"
+  },
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python"
+      ]
+    }
+  },
+  
+  "forwardPorts": [6080, 8080],
+  
+  "remoteEnv": {
+    "DISPLAY": ":99"
+  }
+}
