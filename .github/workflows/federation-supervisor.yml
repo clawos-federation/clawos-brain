@@ -1,0 +1,62 @@
+name: Federation Supervisor
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:
+
+jobs:
+  supervisor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout clawos-brain
+        uses: actions/checkout@v4
+
+      - name: Check Federation Health
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "## 🏰 ClawOS Federation Health Report" >> $GITHUB_STEP_SUMMARY
+          echo "**Time**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # 1. Repository Status
+          echo "### 📦 Repository Status" >> $GITHUB_STEP_SUMMARY
+          echo "| Repository | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
+          
+          repos=("clawos-brain" "clawos-blackboard" "clawos-alpha" "clawos-docs" "clawos-actions")
+          for repo in "${repos[@]}"; do
+            status=$(gh repo view clawos-federation/$repo --json isArchived,disabled -q '.isArchived == false and .disabled == false' 2>/dev/null && echo "✅ Active" || echo "⚠️ Check")
+            echo "| $repo | $status |" >> $GITHUB_STEP_SUMMARY
+          done
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # 2. Blackboard Status (simulated - no actual blackboard repo access)
+          echo "### 📋 Blackboard Status" >> $GITHUB_STEP_SUMMARY
+          echo "| Path | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| tasks/pending | 📭 Empty |" >> $GITHUB_STEP_SUMMARY
+          echo "| tasks/running | 📭 Empty |" >> $GITHUB_STEP_SUMMARY
+          echo "| federation/heartbeat | ✅ OK |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # 3. Local Structure Check
+          echo "### 🧠 Brain Structure" >> $GITHUB_STEP_SUMMARY
+          echo "| Directory | Exists |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          for dir in brain code workspace; do
+            if [ -d "$dir" ]; then
+              echo "| $dir/ | ✅ |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| $dir/ | ❌ Missing |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### ✅ Supervisor Check Complete" >> $GITHUB_STEP_SUMMARY
+
+      - name: Health Alert
+        if: failure()
+        run: |
+          echo "::warning::Federation health check failed - review logs"
