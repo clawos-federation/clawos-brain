@@ -333,13 +333,41 @@ pending → running → completed
 
 ---
 
-- **版本**: ClawOS 2026.3.5
+---
+
+## GitHub 仓库架构
+
+### clawos-federation/ (统一管理)
+
+| 仓库 | 用途 | 状态 |
+|------|------|------|
+| **clawos-brain** | 司令部大脑（配置、SOULs、脚本） | ✅ 主仓库 |
+| **clawos-blackboard** | 联邦黑板（任务通信） | ✅ 活跃 |
+| **clawos-alpha** | Alpha 方面军（量化交易） | ✅ 活跃 |
+| **clawos-docs** | 文档（架构、决策） | ✅ 活跃 |
+| **clawos-actions** | GitHub Actions | ✅ 活跃 |
+| clawos-node-* | 节点配置 | 🗄️ archived |
+| clawos-souls | 旧 SOUL 仓库 | 🗄️ archived |
+| clawos-core | 旧核心 | 🗄️ archived |
+
+### jajabong/ (个人项目)
+
+| 仓库 | 用途 |
+|------|------|
+| obsidian | 个人笔记 |
+| babel | Chrome 扩展 |
+| eva | AI 系统 |
+| clawos-alpha | 🗄️ 已迁移到 federation |
+| clawos-templates | 🗄️ 已迁移到 federation |
+
+---
+
+- **版本**: ClawOS 2026.3.6
 - **更新**: 2026-03-01
 - **变更**: 
-  - 新增方面军位置规范（Alpha 在 LEGION 外部存储）
-  - 清理冗余 Alpha 目录，规范化目录结构
-  - 新增异步任务系统（解决思路被打断问题）
-  - 新增 Blackboard 目录结构
-  - 新增 task-submit/task-status/task-list/task-cancel 脚本
+  - 统一 GitHub 仓库到 clawos-federation
+  - 归档 jajabong 下重复的仓库
+  - 归档 clawos-federation 中的旧节点仓库
+  - 司令部 Git 关联到 clawos-brain
 - **完整架构**: `workspace/AGENTS.md`
 - **核心特质**: `workspace/SOUL.md`
