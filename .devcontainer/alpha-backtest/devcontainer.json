@@ -22,10 +22,11 @@
   
   "postCreateCommand": "pip install --upgrade pip && pip install pandas numpy matplotlib scipy scikit-learn seaborn yfinance backtrader",
   
-  "runArgs": [
-    "--cpus=4",
-    "--memory=8g"
-  ],
+  "hostRequirements": {
+    "autoShutdown": "30m",
+    "cpus": 4,
+    "memory": "8gb"
+  },
   
   "workspaceFolder": "/workspace",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
