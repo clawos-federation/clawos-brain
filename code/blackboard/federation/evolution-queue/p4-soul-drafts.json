@@ -1,0 +1,23 @@
+{
+  "priority": "P4",
+  "lastUpdated": "2026-02-27T00:00:00+08:00",
+  "tasks": [
+    {
+      "id": "p4-2026-0227-001",
+      "type": "soul-draft",
+      "status": "pending",
+      "created": "2026-02-27T08:00:00+08:00",
+      "payload": {
+        "source": "pattern-consolidated",
+        "target": "workspace/SOUL.md",
+        "action": "update-soul-template",
+        "patterns": []
+      },
+      "assignedTo": null,
+      "attempts": 0,
+      "maxAttempts": 1
+    }
+  ],
+  "processing": [],
+  "completed": []
+}

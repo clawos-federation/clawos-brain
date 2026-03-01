@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-02-24T00:00:00Z",
+  "metrics": {
+    "tasksCompleted": 0,
+    "tasksFailed": 0,
+    "avgCompletionTime": 0,
+    "agentUsage": {
+      "assistant": 0,
+      "gm": 0,
+      "validator": 0,
+      "platform-pm": 0,
+      "coding-pm": 0,
+      "writing-pm": 0,
+      "coder-frontend": 0,
+      "coder-backend": 0,
+      "tester-auto": 0,
+      "writer-general": 0,
+      "researcher-web": 0,
+      "reviewer-content": 0,
+      "github-ops": 0,
+      "sreagent": 0,
+      "securityagent": 0
+    }
+  }
+}

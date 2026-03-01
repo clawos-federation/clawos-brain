@@ -1,0 +1,219 @@
+name: Memory to GitHub
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # 每6小时
+  workflow_dispatch:
+    inputs:
+      direction:
+        description: 'Sync direction (bidirectional, github-to-r2, r2-to-github)'
+        required: false
+        default: 'bidirectional'
+      force:
+        description: 'Force full sync (ignore timestamps)'
+        required: false
+        default: 'false'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout memory branch
+        uses: actions/checkout@v4
+        with:
+          repository: clawos-federation/clawos-brain
+          ref: memory
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests pyyaml boto3
+
+      - name: Get sync timestamp
+        id: timestamp
+        run: |
+          echo "start=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+          echo "last_sync=$(cat .last_sync 2>/dev/null || echo '1970-01-01T00:00:00Z')" >> $GITHUB_OUTPUT
+
+      # === NEW: Bidirectional sync from MemOS ===
+      - name: Sync from MemOS
+        env:
+          MEMOS_URL: ${{ secrets.MEMOS_URL }}
+          MEMOS_KEY: ${{ secrets.MEMOS_KEY }}
+        run: |
+          python scripts/sync_memos.py \
+            --url $MEMOS_URL \
+            --key $MEMOS_KEY \
+            --output memory/workers/ \
+            --since "${{ steps.timestamp.outputs.last_sync }}" \
+            --incremental ${{ github.event.inputs.force != 'true' }}
+
+      # === NEW: Bidirectional sync - GitHub → R2 ===
+      - name: Sync GitHub to R2
+        if: github.event.inputs.direction == 'bidirectional' || github.event.inputs.direction == 'github-to-r2' || github.event.inputs.direction == ''
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY: ${{ secrets.R2_ACCESS_KEY }}
+          R2_SECRET_KEY: ${{ secrets.R2_SECRET_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          python scripts/sync_github_to_r2.py \
+            --local memory/ \
+            --bucket $R2_BUCKET \
+            --prefix "memory/" \
+            --since "${{ steps.timestamp.outputs.last_sync }}" \
+            --incremental ${{ github.event.inputs.force != 'true' }}
+
+      # === NEW: Bidirectional sync - R2 → Local ===
+      - name: Sync R2 to Local
+        if: github.event.inputs.direction == 'bidirectional' || github.event.inputs.direction == 'r2-to-github' || github.event.inputs.direction == ''
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY: ${{ secrets.R2_ACCESS_KEY }}
+          R2_SECRET_KEY: ${{ secrets.R2_SECRET_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          python scripts/sync_r2_to_local.py \
+            --bucket $R2_BUCKET \
+            --prefix "memory/" \
+            --output memory/ \
+            --since "${{ steps.timestamp.outputs.last_sync }}" \
+            --incremental ${{ github.event.inputs.force != 'true' }}
+
+      # === NEW: Sync Blackboard from R2 ===
+      - name: Sync Blackboard from R2
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY: ${{ secrets.R2_ACCESS_KEY }}
+          R2_SECRET_KEY: ${{ secrets.R2_SECRET_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          python scripts/sync_r2.py \
+            --bucket $R2_BUCKET \
+            --key ${{ secrets.R2_KEY }} \
+            --prefix "blackboard/" \
+            --output blackboard/ \
+            --since "${{ steps.timestamp.outputs.last_sync }}" \
+            --incremental ${{ github.event.inputs.force != 'true' }}
+
+      # === NEW: Conflict detection ===
+      - name: Detect conflicts
+        id: conflicts
+        run: |
+          python scripts/detect_conflicts.py \
+            --local memory/ \
+            --r2-prefix "memory/" \
+            --output conflicts/report.json
+          
+          if [ -s conflicts/report.json ] && [ "$(cat conflicts/report.json)" != "{}" ]; then
+            echo "has_conflicts=true" >> $GITHUB_OUTPUT
+            echo "conflict_count=$(python -c 'import json; print(len(json.load(open("conflicts/report.json")))))" >> $GITHUB_OUTPUT
+          else
+            echo "has_conflicts=false" >> $GITHUB_OUTPUT
+          fi
+
+      # === NEW: Auto-resolve conflicts ===
+      - name: Auto-resolve conflicts
+        if: steps.conflicts.outputs.has_conflicts == 'true'
+        run: |
+          python scripts/resolve_conflicts.py \
+            --conflicts conflicts/report.json \
+            --strategy "latest-wins" \
+            --local memory/ \
+            --output conflicts/resolved.json
+
+      # === NEW: Generate conflict report ===
+      - name: Generate conflict report
+        if: steps.conflicts.outputs.has_conflicts == 'true'
+        run: |
+          python scripts/generate_conflict_report.py \
+            --conflicts conflicts/report.json \
+            --resolved conflicts/resolved.json \
+            --output conflicts/report.md
+
+      # === NEW: Incremental sync stats ===
+      - name: Generate sync stats
+        run: |
+          python scripts/generate_sync_stats.py \
+            --start "${{ steps.timestamp.outputs.last_sync }}" \
+            --end "${{ steps.timestamp.outputs.start }}" \
+            --output sync/stats.json
+
+      # === Commit memory updates ===
+      - name: Commit memory updates
+        run: |
+          git config user.name "clawos-memory"
+          git config user.email "memory@clawos.ai"
+          git add memory/ blackboard/
+          git diff --quiet && git diff --staged --quiet || \
+            git commit -m "memory: bidirectional sync $(date +%Y-%m-%d-%H:%M)"
+          git push
+
+      # === Update last sync timestamp ===
+      - name: Update sync timestamp
+        run: |
+          echo "${{ steps.timestamp.outputs.start }}" > .last_sync
+          git config user.name "clawos-memory"
+          git config user.email "memory@clawos.ai"
+          git add .last_sync
+          git diff --quiet && git diff --staged --quiet || \
+            git commit -m "memory: update sync timestamp"
+          git push
+
+      # === NEW: Create sync report PR if conflicts ===
+      - name: Create Conflict Report PR
+        if: steps.conflicts.outputs.has_conflicts == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "memory: conflict resolution $(date +%Y-%m-%d)"
+          title: "⚠️ Memory Sync Conflicts - $(date +%Y-%m-%d)"
+          body: |
+            ## ⚠️ Sync Conflicts Detected
+            
+            **Conflicts Found**: ${{ steps.conflicts.outputs.conflict_count }}
+            **Auto-Resolved**: Yes (strategy: latest-wins)
+            
+            ### Conflict Details
+            
+            ```markdown
+            $(cat conflicts/report.md 2>/dev/null || echo 'No report available')
+            ```
+            
+            ### Sync Statistics
+            
+            ```json
+            $(cat sync/stats.json 2>/dev/null || echo '{}')
+            ```
+            
+            ---
+            
+            **Action Required**: Please review auto-resolved conflicts.
+            
+          branch: memory/conflicts-$(date +%Y-%m-%d)
+          labels: memory,conflicts,auto-resolved
+          reviewers: ${{ secrets.MEMORY_REVIEWERS }}
+
+      # === Notifications ===
+      - name: Notify on success
+        if: success()
+        run: |
+          python scripts/send_notification.py \
+            --type sync-complete \
+            --stats sync/stats.json \
+            --conflicts ${{ steps.conflicts.outputs.has_conflicts }} \
+            --webhook ${{ secrets.NOTIFICATION_WEBHOOK }}
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          python scripts/send_notification.py \
+            --type sync-failed \
+            --webhook ${{ secrets.NOTIFICATION_WEBHOOK }}

@@ -1,0 +1,93 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-02-27",
+  "description": "Server oversight capabilities for Alpha quant node",
+  "model": "coach-player",
+  
+  "serverCapabilities": {
+    "can_read_alpha_reports": {
+      "description": "Read daily reports, backtest results, signal predictions",
+      "paths": [
+        "blackboard/alpha/reports/",
+        "blackboard/alpha/signals/",
+        "blackboard/alpha/backtest/"
+      ],
+      "allowed": true
+    },
+    "can_set_evolution_goals": {
+      "description": "Set evolution direction for Alpha node",
+      "paths": [
+        "blackboard/evolution-queue/alpha-goals.json"
+      ],
+      "allowed": true
+    },
+    "can_request_live_trading": {
+      "description": "Request live trading activation (requires human approval)",
+      "requiresHumanApproval": true,
+      "workflow": "dual-control",
+      "allowed": true
+    },
+    "can_emergency_halt": {
+      "description": "Emergency stop of Alpha node",
+      "controlPlane": "secure",
+      "mutualAuth": true,
+      "allowed": true
+    },
+    "can_execute_trades": {
+      "description": "Execute trades directly",
+      "allowed": false,
+      "reason": "Server is coordinator, not executor"
+    },
+    "can_override_risk": {
+      "description": "Override risk-controller decisions",
+      "allowed": false,
+      "reason": "Risk limits are immutable at SDK level"
+    }
+  },
+  
+  "humanApprovalGate": {
+    "liveTrading": {
+      "required": true,
+      "minApprovers": 1,
+      "validApprovers": ["human-operator"],
+      "tokenExpiry": "24h",
+      "auditLog": "blackboard/alpha/approvals/"
+    },
+    "strategyChange": {
+      "required": true,
+      "minApprovers": 1,
+      "validApprovers": ["human-operator"],
+      "threshold": "major strategy change"
+    }
+  },
+  
+  "secureControlPlane": {
+    "emergencyHalt": {
+      "channel": "localhost:18790/control",
+      "authentication": "mutual-tls",
+      "tokenRequired": true,
+      "auditLog": true
+    },
+    "pauseResume": {
+      "channel": "localhost:18790/control",
+      "authentication": "capability-token",
+      "auditLog": true
+    }
+  },
+  
+  "auditRequirements": {
+    "signedReports": {
+      "description": "Alpha must sign all reports",
+      "algorithm": "Ed25519",
+      "verificationNode": "server"
+    },
+    "immutableLog": {
+      "description": "All execution requests and risk decisions logged",
+      "path": "blackboard/alpha/audit/",
+      "retention": "90d"
+    }
+  },
+  
+  "enforcementLevel": "sdk",
+  "bypassable": false
+}

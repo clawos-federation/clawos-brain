@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "description": "ClawOS 自定义 Agent 元数据（tier、permissions、description）",
+    "version": "2026.3",
+    "lastUpdated": "2026-02-25"
+  },
+  "tiers": {
+    "ECO": {"description": "经济型，使用 glm-5"},
+    "HARDCORE": {"description": "高性能，使用 gpt-5.3-codex"},
+    "TITAN": {"description": "顶级，使用 claude-opus-4-6-thinking"}
+  },
+  "agents": {
+    "assistant": {
+      "tier": "ECO",
+      "permissions": {
+        "allowedCommands": ["cat", "ls", "echo", "head", "tail"],
+        "blockedCommands": ["*"]
+      }
+    },
+    "gm": {
+      "tier": "TITAN",
+      "permissions": {
+        "allowedCommands": ["cat", "ls", "echo", "node", "npx", "head", "tail"],
+        "blockedCommands": ["*"]
+      }
+    },
+    "validator": {
+      "tier": "TITAN",
+      "permissions": {
+        "allowedCommands": ["cat", "ls", "head", "tail"],
+        "blockedCommands": ["*"]
+      },
+      "description": "独立质量验证 Agent - 只读验证，不参与执行"
+    },
+    "platform-pm": {
+      "tier": "TITAN",
+      "permissions": {
+        "allowedCommands": ["cat", "ls", "echo", "git", "curl", "node", "npx", "npm"],
+        "blockedCommands": ["*"]
+      }
+    },
+    "writing-pm": {
+      "tier": "ECO",
+      "permissions": {
+        "allowedCommands": ["cat", "ls", "echo", "mkdir", "mv", "cp"],
+        "blockedCommands": ["*"]
+      }
+    },
+    "coding-pm": {
+      "tier": "ECO",
+      "permissions": {
+        "allowedCommands": ["cat", "ls", "echo", "mkdir", "mv", "cp", "npm", "npx", "git"],
+        "blockedCommands": ["*"]
+      }
+    },
+    "writer-general": {"tier": "ECO", "permissions": {"allowedCommands": ["cat", "ls", "echo", "mkdir"], "blockedCommands": ["*"]}},
+    "researcher-web": {"tier": "ECO", "permissions": {"allowedCommands": ["cat", "ls", "echo", "curl", "wget"], "blockedCommands": ["*"]}},
+    "reviewer-content": {"tier": "ECO", "permissions": {"allowedCommands": ["cat", "ls", "echo"], "blockedCommands": ["*"]}},
+    "coder-frontend": {"tier": "HARDCORE", "permissions": {"allowedCommands": ["cat", "ls", "echo", "mkdir", "mv", "cp", "npm", "npx", "node"], "blockedCommands": ["*"]}},
+    "coder-backend": {"tier": "HARDCORE", "permissions": {"allowedCommands": ["cat", "ls", "echo", "mkdir", "mv", "cp", "npm", "npx", "node", "python", "pip"], "blockedCommands": ["*"]}},
+    "tester-auto": {"tier": "HARDCORE", "permissions": {"allowedCommands": ["cat", "ls", "echo", "npm", "npx", "node", "pytest", "jest"], "blockedCommands": ["*"]}},
+    "github-ops": {"tier": "HARDCORE", "permissions": {"allowedCommands": ["git", "gh", "cat", "ls", "echo"], "blockedCommands": ["*"]}},
+    "sreagent": {"tier": "HARDCORE", "permissions": {"allowedCommands": ["cat", "ls", "echo", "docker", "kubectl", "systemctl", "journalctl", "top", "htop"], "blockedCommands": ["*"]}, "description": "运维专家"},
+    "securityagent": {"tier": "HARDCORE", "permissions": {"allowedCommands": ["cat", "ls", "echo", "grep", "find", "audit"], "blockedCommands": ["*"]}, "description": "安全专家"},
+    "alpha-bridge": {"tier": "ECO", "permissions": {"allowedCommands": ["cat", "ls", "echo", "gh"], "blockedCommands": ["*"]}, "description": "与 Codespace Alpha 系统的通信桥梁"}
+  }
+}

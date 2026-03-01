@@ -1,0 +1,8 @@
+{
+  "errorRatePercent": 0.12,
+  "p95LatencyDeltaPercent": 6.8,
+  "costDeltaPercent": 3.1,
+  "criticalSecurityAlert": false,
+  "dataConsistencyIssue": false,
+  "updatedAt": "2026-02-28T10:25:00+08:00"
+}

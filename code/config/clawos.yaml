@@ -1,0 +1,156 @@
+# ClawOS 配置文件
+# 版本: 2026.3
+
+clawos:
+  version: "2026.3"
+  architecture: "15-agents"
+  
+# 分层架构
+layers:
+  command:
+    agents: [assistant, gm, validator]
+    description: "决策层 - 用户交互和任务调度"
+  
+  pm:
+    agents: [platform-pm, coding-pm, writing-pm]
+    description: "管理层 - 项目管理和团队协调"
+  
+  worker:
+    development: [coder-backend, coder-frontend, tester-auto, github-ops]
+    writing: [writer-general, researcher-web, reviewer-content]
+    system: [sreagent, securityagent, alpha-bridge]
+    description: "执行层 - 具体任务执行"
+
+# Agent 配置
+agents:
+  defaults:
+    model: "zai/glm-5"
+    max_tokens: 4096
+    temperature: 0.7
+  
+  tiers:
+    titan:       # 最强模型
+      model: "claude-sonnet-4"
+      agents: [validator, gm]
+    
+    hardcore:    # 代码模型
+      model: "claude-sonnet-4"
+      agents: [coder-backend, coder-frontend, sreagent, securityagent]
+    
+    standard:    # 平衡模型
+      model: "zai/glm-5"
+      agents: [assistant, platform-pm, coding-pm, writing-pm]
+    
+    economy:     # 快速模型
+      model: "zai/glm-5"
+      agents: [writer-general, researcher-web, reviewer-content, tester-auto]
+
+# 记忆系统
+memory:
+  l1:
+    type: "ram"
+    capacity: "100MB"
+    ttl: "session"
+  
+  l2:
+    type: "sqlite"
+    path: "~/clawos/memory/medium.db"
+    capacity: "1GB"
+    retention: "30 days"
+  
+  l3:
+    type: "vector"
+    path: "~/clawos/memory/longterm"
+    capacity: "10GB+"
+    retention: "permanent"
+  
+  l4:
+    type: "files"
+    skills_path: "~/openclaw/skills"
+    workflows_path: "~/clawos/workflows"
+
+# 通信配置
+communication:
+  channels:
+    - type: "blackboard"
+      path: "~/clawos/blackboard"
+      async: true
+    
+    - type: "sessions"
+      tool: "sessions_send"
+      async: false
+  
+  priorities:
+    critical: 0    # 立即响应
+    high: 300      # 5 分钟
+    normal: 1800   # 30 分钟
+    low: 86400     # 24 小时
+
+# ReAct 配置
+react:
+  max_iterations: 10
+  phases: [think, act, observe, reflect, adapt]
+  
+  timeouts:
+    think: 30000
+    act: 60000
+    observe: 10000
+    reflect: 20000
+    adapt: 10000
+  
+  experience:
+    enabled: true
+    min_relevance: 0.7
+    max_recall: 5
+
+# 工具链配置
+toolchain:
+  max_workers: 5
+  timeout: 300000
+  
+  error_handling:
+    default: "abort"
+    retry_count: 2
+    retry_delay: 1000
+
+# Blackboard 配置
+blackboard:
+  root: "~/clawos/blackboard"
+  
+  directories:
+    tasks: "tasks"
+    inbox: "inbox"
+    shared: "shared"
+  
+  cleanup:
+    enabled: true
+    interval: "daily"
+    retention: "7 days"
+
+# 心跳配置
+heartbeat:
+  interval: "15 minutes"
+  silent_hours: "23:00-08:00"
+  
+  triggers:
+    - task_complete
+    - task_failed
+    - error_occurred
+    - user_request
+
+# 安全配置
+security:
+  allowed_tools:
+    command: [read, write, memory_get, memory_search, message]
+    pm: [read, write, exec, sessions_spawn, memory_get, memory_search]
+    worker: [read, write, exec, memory_get, memory_search]
+  
+  forbidden_tools:
+    assistant: [exec, sessions_spawn]
+    validator: [write, exec, sessions_spawn, message]
+  
+  sandbox:
+    enabled: true
+    paths:
+      read: ["~/clawos", "~/openclaw"]
+      write: ["~/clawos/blackboard", "~/clawos/memory"]

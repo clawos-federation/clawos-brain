@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "taskId": "",
+  "workflow": "",
+  "startedAt": "",
+  "completedAt": null,
+  "status": "running|completed|failed|compensating",
+  "currentStep": "",
+  "completedSteps": [],
+  "failedStep": null,
+  "checkpoints": [
+    {
+      "step": "",
+      "timestamp": "",
+      "status": "success|failed|compensated",
+      "output": "",
+      "compensationExecuted": false
+    }
+  ],
+  "compensationLog": [],
+  "resumeToken": null
+}

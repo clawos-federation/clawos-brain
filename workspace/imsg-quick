@@ -1,0 +1,44 @@
+#!/bin/bash
+# iMessage 快捷命令集
+
+case "$1" in
+  "chats")
+    imsg chats --limit 10
+    ;;
+  "history")
+    imsg history --chat-id ${2:-5292} --limit 20
+    ;;
+  "send")
+    if [ -z "$2" ] || [ -z "$3" ]; then
+      echo "用法: imsg-quick send <联系人> <消息>"
+      echo "示例: imsg-quick send lu_dongsheng@hotmail.com '你好'"
+      exit 1
+    fi
+    imsg send --to "$2" --text "$3"
+    ;;
+  "watch")
+    imsg watch --chat-id ${2:-5292}
+    ;;
+  "test")
+    echo "=== 测试 iMessage 功能 ==="
+    echo ""
+    echo "1. 测试读取聊天列表..."
+    imsg chats --limit 3
+    echo ""
+    echo "2. 测试读取历史消息..."
+    imsg history --chat-id 5292 --limit 3
+    echo ""
+    echo "3. 测试发送功能..."
+    echo "   请手动执行: imsg-quick send lu_dongsheng@hotmail.com '测试'"
+    ;;
+  *)
+    echo "iMessage 快捷命令"
+    echo ""
+    echo "用法:"
+    echo "  imsg-quick chats              - 列出最近对话"
+    echo "  imsg-quick history [chat_id]  - 查看历史 (默认: 5292)"
+    echo "  imsg-quick send <to> <msg>    - 发送消息"
+    echo "  imsg-quick watch [chat_id]    - 监听新消息"
+    echo "  imsg-quick test               - 测试功能"
+    ;;
+esac

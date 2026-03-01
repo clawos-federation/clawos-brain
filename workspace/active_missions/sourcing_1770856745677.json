@@ -1,0 +1,19 @@
+{
+  "id": "sourcing_1770856745677",
+  "startTime": "2026-02-12T00:39:05.680Z",
+  "task": "全球技能定向发现测试",
+  "status": "active",
+  "sharedContext": {},
+  "entries": [],
+  "messages": [],
+  "proposals": [
+    {
+      "id": "prop_1770856746700",
+      "timestamp": "2026-02-12T00:39:06.700Z",
+      "agentId": "gm",
+      "title": "【战略提案】集成 Anthropic 官方 PDF 引擎",
+      "description": "发现源: Community\nURL: https://github.com/openclaw/skills/tree/main/skills/awspace/pdf/SKILL.md\n建议: 该技能代表了目前工业界的最高水准，集成后将赋予 ResearchAgent 秒杀一切复杂财报的能力。",
+      "status": "pending"
+    }
+  ]
+}

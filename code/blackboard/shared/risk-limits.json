@@ -1,0 +1,83 @@
+{
+  "version": "1.1.0",
+  "version": "1.0.0",
+  "lastUpdated": "2026-02-27",
+  "rules": [
+    {
+      "id": "alpha-isolation",
+      "type": "node-restriction",
+      "description": "Alpha executor can only run on quant node",
+      "agents": ["alpha-executor", "risk-controller"],
+      "allowedNodes": ["quant", "alpha-codespace-001"],
+      "enforcement": "hard",
+      "bypassable": false
+    },
+    {
+      "id": "trading-limits",
+      "type": "resource-limit",
+      "description": "Alpha trading risk limits",
+      "agents": ["alpha-executor"],
+      "limits": {
+        "dailyLossLimit": 0.02,
+        "singleTradeLimit": 0.05,
+        "manualConfirmThreshold": 10000
+      },
+      "enforcement": "hard",
+      "bypassable": false
+    },
+    {
+      "id": "disconnect-action",
+      "type": "safety-action",
+      "description": "Auto-stop on disconnect",
+      "agents": ["alpha-executor"],
+      "trigger": "disconnect > 30 minutes",
+      "action": "safe_stop",
+      "enforcement": "hard",
+      "bypassable": false
+    },
+    {
+      "id": "cost-limit",
+      "type": "resource-limit",
+      "description": "Daily token limit per agent",
+      "limits": {
+        "coding-pm": 100000,
+        "writing-pm": 50000,
+        "default": 30000
+      },
+      "enforcement": "soft",
+      "bypassable": true
+    },
+    {
+      "id": "no-production-write",
+      "type": "action-restriction",
+      "description": "Non-production agents cannot deploy",
+      "agents": ["!production-*", "!sreagent"],
+      "forbiddenActions": ["deploy-production", "prod-write"],
+      "enforcement": "hard",
+      "bypassable": false
+    }
+    },
+    {
+      "id": "live-trading-approval",
+      "type": "action-restriction",
+      "description": "Live trading requires human approval (dual-control)",
+      "agents": ["alpha-executor"],
+      "action": "enable-live-trading",
+      "requiresHumanApproval": true,
+      "minApprovers": 1,
+      "tokenExpiry": "24h",
+      "enforcement": "hard",
+      "bypassable": false
+    },
+    {
+      "id": "server-oversight-boundary",
+      "type": "capability-restriction",
+      "description": "Server cannot execute trades or override risk",
+      "node": "server",
+      "forbiddenActions": ["execute-trade", "override-risk", "bypass-risk-controller"],
+      "enforcement": "hard",
+      "bypassable": false
+    }
+  ],
+  "immutable": ["alpha-isolation", "trading-limits", "disconnect-action", "live-trading-approval", "server-oversight-boundary"]
+}

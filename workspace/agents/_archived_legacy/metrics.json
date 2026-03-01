@@ -1,0 +1,47 @@
+{
+  "totalExecutions": 35,
+  "successfulExecutions": 35,
+  "failedExecutions": 0,
+  "avgDuration": 289.74285714285713,
+  "avgConfidence": 0,
+  "agentUsage": {
+    "devagent": {
+      "executions": 30,
+      "successes": 30
+    },
+    "legalagent": {
+      "executions": 17,
+      "successes": 17
+    },
+    "researchagent": {
+      "executions": 12,
+      "successes": 12
+    },
+    "henry": {
+      "executions": 12,
+      "successes": 12
+    },
+    "gm": {
+      "executions": 11,
+      "successes": 11
+    },
+    "testagent": {
+      "executions": 7,
+      "successes": 7
+    },
+    "browser_logic": {
+      "executions": 7,
+      "successes": 7
+    },
+    "browser_intuition": {
+      "executions": 7,
+      "successes": 7
+    }
+  },
+  "modeUsage": {
+    "single-agent": 21,
+    "parallel-voting": 7,
+    "sequential-chain": 7
+  },
+  "startTime": "2026-02-10T23:24:39.787Z"
+}

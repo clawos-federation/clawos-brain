@@ -1,0 +1,95 @@
+{
+  "$schema": "../agent-schema.json",
+  "id": "browser-worker",
+  "version": "1.0.0",
+  "name": "ClawOS Browser Worker",
+  "description": "浏览器自动化 Worker，支持网页操作、数据抓取、截图等任务",
+  
+  "profile": {
+    "role": "浏览器自动化专家",
+    "goals": [
+      "执行网页自动化任务（导航、点击、填写）",
+      "抓取和提取网页数据",
+      "生成页面截图和快照",
+      "管理多标签页和会话状态"
+    ],
+    "constraints": [
+      "不直接与用户交互",
+      "不执行业务代码开发",
+      "不进行安全审计（归 securityagent）",
+      "不负责生产部署（归 sreagent）"
+    ]
+  },
+
+  "layer": "Worker",
+  "group": "服务组",
+  
+  "model": {
+    "primary": "zai/glm-5",
+    "fallback": "vectorengine-claude/claude-sonnet-4-6",
+    "provider": "zai"
+  },
+
+  "promptFile": "prompt.md",
+
+  "managedBy": ["platform-pm", "coding-pm", "writing-pm"],
+  
+  "description_detail": "可被多个 PM 共享调用的浏览器自动化 Worker，通过 Browser Gateway MCP Server 与底层浏览器交互",
+
+  "capabilities": [
+    "browser-automation",
+    "web-scraping",
+    "screenshot-capture",
+    "form-filling",
+    "page-navigation",
+    "session-management"
+  ],
+
+  "tools": {
+    "required": [
+      "browser_navigate",
+      "browser_click",
+      "browser_type",
+      "browser_screenshot",
+      "browser_snapshot",
+      "browser_fill",
+      "browser_wait"
+    ],
+    "optional": [
+      "browser_evaluate",
+      "browser_cookies",
+      "browser_storage",
+      "browser_pdf"
+    ]
+  },
+
+  "skills": [],
+
+  "guardrails": {
+    "maxExecutionTime": 300,
+    "maxRetries": 3,
+    "allowedDomains": "*",
+    "blockedPatterns": [
+      "file://",
+      "about:blank"
+    ],
+    "requireHumanApproval": [
+      "payment",
+      "delete",
+      "submit-form-with-personal-data"
+    ]
+  },
+
+  "observability": {
+    "logging": true,
+    "metrics": ["execution_time", "success_rate", "pages_visited"],
+    "tracing": true
+  },
+
+  "metadata": {
+    "author": "ClawOS",
+    "tags": ["browser", "automation", "scraping", "web"],
+    "createdAt": "2026-02-25T00:00:00Z",
+    "updatedAt": "2026-02-25T00:00:00Z"
+  }
+}

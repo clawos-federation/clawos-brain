@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "taskId": "",
+  "title": "",
+  "type": "write|code|research|design",
+  "description": "",
+  "userId": "",
+  "createdAt": "",
+  "updatedAt": "",
+  "status": "pending|planning|executing|validating|completed|failed",
+  "priority": "P0|P1|P2|P3",
+  "assignedPM": "",
+  "assignedWorkers": [],
+  "parentTaskId": null,
+  "tags": [],
+  "metadata": {
+    "estimatedHours": 0,
+    "actualHours": 0,
+    "llmCalls": 0,
+    "tokenUsage": 0
+  },
+  "acceptanceCriteria": [],
+  "deliverables": [],
+  "constraints": [],
+  "risks": [],
+  "dependencies": []
+}

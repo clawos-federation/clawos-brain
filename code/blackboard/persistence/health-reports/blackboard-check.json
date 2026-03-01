@@ -1,0 +1,194 @@
+{
+  "timestamp": "2026-02-28T11:20:00.888970+00:00",
+  "check_type": "blackboard",
+  "blackboard_root": "/Users/dongshenglu/openclaw-system/clawos/blackboard",
+  "directory_structure": {
+    "required": {
+      "tasks": {
+        "exists": true,
+        "description": "Task management and status"
+      },
+      "gm": {
+        "exists": true,
+        "description": "GM decisions and escalations"
+      },
+      "shared": {
+        "exists": true,
+        "description": "Shared context between agents"
+      },
+      "persistence": {
+        "exists": true,
+        "description": "Persistent storage and snapshots"
+      },
+      "errors": {
+        "exists": true,
+        "description": "Error logging"
+      },
+      "logs": {
+        "exists": true,
+        "description": "System logs"
+      },
+      "metrics": {
+        "exists": true,
+        "description": "Performance metrics"
+      },
+      "audit": {
+        "exists": true,
+        "description": "Audit records"
+      },
+      "coding-pm": {
+        "exists": true,
+        "description": "Coding PM workspace"
+      },
+      "writing-pm": {
+        "exists": true,
+        "description": "Writing PM workspace"
+      },
+      "platform-pm": {
+        "exists": true,
+        "description": "Platform PM workspace"
+      },
+      "alpha": {
+        "exists": true,
+        "description": "Alpha quantitative data"
+      },
+      "proposals": {
+        "exists": true,
+        "description": "System improvement proposals"
+      }
+    },
+    "optional": {
+      "assistant": {
+        "exists": true,
+        "description": "Assistant agent workspace"
+      },
+      "alpha/signals": {
+        "exists": true,
+        "description": "Alpha trading signals"
+      },
+      "alpha/reports": {
+        "exists": true,
+        "description": "Alpha analysis reports"
+      },
+      "persistence/snapshots": {
+        "exists": true,
+        "description": "State snapshots"
+      },
+      "persistence/archive": {
+        "exists": true,
+        "description": "Archived data"
+      },
+      "persistence/history": {
+        "exists": true,
+        "description": "Historical records"
+      },
+      "persistence/metrics": {
+        "exists": true,
+        "description": "Metrics storage"
+      },
+      "proposals/self-improvement": {
+        "exists": true,
+        "description": "Self-improvement proposals"
+      },
+      "proposals/skills-proposal": {
+        "exists": true,
+        "description": "Skills proposals"
+      },
+      "proposals/temp-agents": {
+        "exists": true,
+        "description": "Temporary agent proposals"
+      },
+      "proposals/skills-discovery": {
+        "exists": true,
+        "description": "Skills discovery proposals"
+      }
+    },
+    "missing_required": [],
+    "total_required": 13,
+    "total_optional": 11,
+    "healthy": true
+  },
+  "required_files": {
+    "files": {
+      "heartbeat-state.json": {
+        "exists": true,
+        "valid": true,
+        "size": 238,
+        "description": "System heartbeat state"
+      },
+      "tasks/pending.md": {
+        "exists": true,
+        "valid": true,
+        "size": 272,
+        "description": "Pending tasks queue"
+      },
+      "tasks/assigned.md": {
+        "exists": true,
+        "valid": true,
+        "size": 524,
+        "description": "Assigned tasks list"
+      },
+      "tasks/template/task.json": {
+        "exists": true,
+        "valid": true,
+        "size": 607,
+        "description": "Task schema template"
+      },
+      "tasks/template/status.md": {
+        "exists": true,
+        "valid": true,
+        "size": 818,
+        "description": "Task status template"
+      },
+      "gm/status.md": {
+        "exists": true,
+        "valid": true,
+        "size": 435,
+        "description": "GM status board"
+      },
+      "gm/decisions.md": {
+        "exists": true,
+        "valid": true,
+        "size": 283,
+        "description": "GM decision log"
+      },
+      "gm/escalations.md": {
+        "exists": true,
+        "valid": true,
+        "size": 301,
+        "description": "GM escalation records"
+      },
+      "gm/README.md": {
+        "exists": true,
+        "valid": true,
+        "size": 233,
+        "description": "GM blackboard documentation"
+      }
+    },
+    "missing": [],
+    "invalid": [],
+    "oversized": [],
+    "healthy": true
+  },
+  "json_schemas": {
+    "validated": [
+      "heartbeat-state.json",
+      "coding-pm/team-assignments.json",
+      "writing-pm/team-assignments.json"
+    ],
+    "errors": [],
+    "healthy": true
+  },
+  "write_permissions": {
+    "writable": [
+      "logs",
+      "errors",
+      "persistence",
+      "tasks"
+    ],
+    "not_writable": [],
+    "healthy": true
+  },
+  "critical_issues": [],
+  "healthy": true
+}

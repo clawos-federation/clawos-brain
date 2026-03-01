@@ -1,0 +1,28 @@
+{
+  "name": "browser-gateway",
+  "version": "1.0.0",
+  "description": "ClawOS Browser Gateway MCP Server - 统一浏览器能力网关",
+  "main": "server.py",
+  "type": "mcp-server",
+  "tools": [
+    "browser_navigate",
+    "browser_click",
+    "browser_type",
+    "browser_screenshot",
+    "browser_snapshot",
+    "browser_fill",
+    "browser_wait",
+    "browser_evaluate",
+    "browser_tabs",
+    "browser_close"
+  ],
+  "backend": {
+    "primary": "openclaw-browser-cli",
+    "fallback": ["playwright", "cdp"]
+  },
+  "config": {
+    "timeout": 30000,
+    "maxRetries": 3,
+    "screenshotDir": "/tmp/openclaw/screenshots"
+  }
+}

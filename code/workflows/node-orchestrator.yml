@@ -1,0 +1,232 @@
+name: Node Orchestrator
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # 每15分钟检查一次
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform (status, scale-up, scale-down, rebalance)'
+        required: false
+        default: 'status'
+      target_nodes:
+        description: 'Target node count for scale operations'
+        required: false
+        default: '2'
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: clawos-federation/clawos-brain
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests pyyaml boto3
+
+      - name: Get current time
+        id: time
+        run: |
+          echo "now=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+          echo "hour=$(date -u +%H)" >> $GITHUB_OUTPUT
+
+      # === Monitor node status ===
+      - name: Check node status
+        id: status
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/check_node_status.py \
+            --org clawos-federation \
+            --output reports/nodes/status.json
+          
+          # Extract metrics
+          ACTIVE_NODES=$(python -c "import json; d=json.load(open('reports/nodes/status.json')); print(d.get('active_count', 0))")
+          IDLE_NODES=$(python -c "import json; d=json.load(open('reports/nodes/status.json')); print(d.get('idle_count', 0))")
+          UNHEALTHY_NODES=$(python -c "import json; d=json.load(open('reports/nodes/status.json')); print(d.get('unhealthy_count', 0))")
+          
+          echo "active=$ACTIVE_NODES" >> $GITHUB_OUTPUT
+          echo "idle=$IDLE_NODES" >> $GITHUB_OUTPUT
+          echo "unhealthy=$UNHEALTHY_NODES" >> $GITHUB_OUTPUT
+
+      # === Check pending tasks ===
+      - name: Check pending tasks
+        id: tasks
+        env:
+          BLACKBOARD_URL: ${{ secrets.BLACKBOARD_URL }}
+        run: |
+          python scripts/check_pending_tasks.py \
+            --blackboard $BLACKBOARD_URL \
+            --output reports/nodes/pending.json
+          
+          PENDING_COUNT=$(python -c "import json; d=json.load(open('reports/nodes/pending.json')); print(d.get('pending_count', 0))")
+          PRIORITY_PENDING=$(python -c "import json; d=json.load(open('reports/nodes/pending.json')); print(d.get('priority_pending', 0))")
+          
+          echo "pending=$PENDING_COUNT" >> $GITHUB_OUTPUT
+          echo "priority=$PRIORITY_PENDING" >> $GITHUB_OUTPUT
+
+      # === Determine scaling action ===
+      - name: Determine scaling action
+        id: scaling
+        run: |
+          python scripts/determine_scaling.py \
+            --active ${{ steps.status.outputs.active }} \
+            --idle ${{ steps.status.outputs.idle }} \
+            --pending ${{ steps.tasks.outputs.pending }} \
+            --priority ${{ steps.tasks.outputs.priority }} \
+            --hour ${{ steps.time.outputs.hour }} \
+            --config config/scaling_policy.yaml \
+            --output reports/nodes/scaling_decision.json
+          
+          ACTION=$(python -c "import json; d=json.load(open('reports/nodes/scaling_decision.json')); print(d.get('action', 'none'))")
+          TARGET=$(python -c "import json; d=json.load(open('reports/nodes/scaling_decision.json')); print(d.get('target_nodes', 0))")
+          
+          echo "action=$ACTION" >> $GITHUB_OUTPUT
+          echo "target=$TARGET" >> $GITHUB_OUTPUT
+
+      # === Auto-start Codespaces ===
+      - name: Start Codespaces (scale up)
+        if: steps.scaling.outputs.action == 'scale-up' || github.event.inputs.action == 'scale-up'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TARGET=${{ github.event.inputs.target_nodes || steps.scaling.outputs.target }}
+          CURRENT=${{ steps.status.outputs.active }}
+          TO_START=$((TARGET - CURRENT))
+          
+          if [ $TO_START -gt 0 ]; then
+            echo "Starting $TO_START Codespaces..."
+            python scripts/manage_codespaces.py \
+              --action start \
+              --count $TO_START \
+              --org clawos-federation \
+              --repo clawos-worker \
+              --machine "basicLinux32gb" \
+              --output reports/nodes/codespaces_started.json
+          fi
+
+      # === Stop idle Codespaces ===
+      - name: Stop idle Codespaces (scale down)
+        if: steps.scaling.outputs.action == 'scale-down' || github.event.inputs.action == 'scale-down'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TARGET=${{ github.event.inputs.target_nodes || steps.scaling.outputs.target }}
+          CURRENT=${{ steps.status.outputs.active }}
+          TO_STOP=$((CURRENT - TARGET))
+          
+          if [ $TO_STOP -gt 0 ]; then
+            echo "Stopping $TO_STOP idle Codespaces..."
+            python scripts/manage_codespaces.py \
+              --action stop \
+              --count $TO_STOP \
+              --select idle \
+              --org clawos-federation \
+              --output reports/nodes/codespaces_stopped.json
+          fi
+
+      # === Rebalance load ===
+      - name: Rebalance load
+        if: steps.scaling.outputs.action == 'rebalance' || github.event.inputs.action == 'rebalance'
+        env:
+          BLACKBOARD_URL: ${{ secrets.BLACKBOARD_URL }}
+        run: |
+          python scripts/rebalance_load.py \
+            --blackboard $BLACKBOARD_URL \
+            --nodes reports/nodes/status.json \
+            --tasks reports/nodes/pending.json \
+            --strategy "least-loaded" \
+            --output reports/nodes/rebalance.json
+
+      # === Health check unhealthy nodes ===
+      - name: Health check unhealthy nodes
+        if: steps.status.outputs.unhealthy > 0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/health_check_nodes.py \
+            --status reports/nodes/status.json \
+            --action restart \
+            --max-restarts 2 \
+            --output reports/nodes/health_recovery.json
+
+      # === Generate load balancer config ===
+      - name: Update load balancer config
+        if: steps.scaling.outputs.action != 'none'
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY: ${{ secrets.R2_ACCESS_KEY }}
+          R2_SECRET_KEY: ${{ secrets.R2_SECRET_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          python scripts/generate_lb_config.py \
+            --nodes reports/nodes/status.json \
+            --output config/load_balancer.yaml \
+            --upload-r2 \
+            --bucket $R2_BUCKET
+
+      # === Update node registry ===
+      - name: Update node registry
+        run: |
+          python scripts/update_node_registry.py \
+            --status reports/nodes/status.json \
+            --registry registry/nodes.json \
+            --backup registry/nodes.backup.json
+
+      # === Commit reports ===
+      - name: Commit reports
+        run: |
+          git config user.name "clawos-orchestrator"
+          git config user.email "orchestrator@clawos.ai"
+          git add reports/nodes/ registry/nodes.json config/load_balancer.yaml
+          git diff --quiet && git diff --staged --quiet || \
+            git commit -m "orchestrator: node status update $(date +%Y-%m-%d-%H:%M)"
+          git push
+
+      # === Generate orchestrator report ===
+      - name: Generate orchestrator report
+        run: |
+          python scripts/generate_orchestrator_report.py \
+            --status reports/nodes/status.json \
+            --pending reports/nodes/pending.json \
+            --scaling reports/nodes/scaling_decision.json \
+            --output reports/nodes/orchestrator_report.md
+
+      # === Alerts ===
+      - name: Alert on unhealthy nodes
+        if: steps.status.outputs.unhealthy > 0
+        run: |
+          python scripts/send_alert.py \
+            --type unhealthy-nodes \
+            --count ${{ steps.status.outputs.unhealthy }} \
+            --details reports/nodes/status.json \
+            --webhook ${{ secrets.ALERT_WEBHOOK }}
+
+      - name: Alert on high pending tasks
+        if: steps.tasks.outputs.pending > 10
+        run: |
+          python scripts/send_alert.py \
+            --type high-pending \
+            --count ${{ steps.tasks.outputs.pending }} \
+            --details reports/nodes/pending.json \
+            --webhook ${{ secrets.ALERT_WEBHOOK }}
+
+      # === Notification ===
+      - name: Notify on scaling action
+        if: steps.scaling.outputs.action != 'none'
+        run: |
+          python scripts/send_notification.py \
+            --type scaling-action \
+            --action ${{ steps.scaling.outputs.action }} \
+            --target ${{ steps.scaling.outputs.target }} \
+            --webhook ${{ secrets.NOTIFICATION_WEBHOOK }}

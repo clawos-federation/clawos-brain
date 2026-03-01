@@ -1,0 +1,128 @@
+# ClawOS 简单任务工作流
+# 基于 Lobster 工作流引擎
+# 三步任务：计划 → 执行 → 验证
+
+name: simple-task
+description: 简单任务流水线，适用于单步骤任务
+
+# 输入参数
+input:
+  taskId: string          # 任务ID
+  taskType: string        # 任务类型: coding|writing|research|platform
+  description: string     # 任务描述
+  userId: string          # 用户ID
+
+# 全局变量
+vars:
+  blackboardBase: "~/clawos/blackboard/tasks"
+
+# 工作流步骤
+steps:
+  # ============================================
+  # Phase 1: 计划阶段
+  # ============================================
+  - name: plan
+    agent: gm
+    prompt: |
+      评估任务并制定执行计划。
+
+      任务ID: {input.taskId}
+      任务类型: {input.taskType}
+      任务描述: {input.description}
+
+      输出:
+      1. 可行性评估 (1-10)
+      2. 选择的 PM
+      3. 预计资源消耗
+      4. 风险点
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/plan.json
+    output: "{vars.blackboardBase}/{input.taskId}/plan.json"
+    outputMapping:
+      selected_pm: "$.selected_pm"
+      feasibility_score: "$.feasibility_score"
+      risks: "$.risks"
+    checkpoint: true
+
+  # ============================================
+  # Phase 2: 执行阶段
+  # ============================================
+  - name: execute
+    agent: "{selected_pm}"
+    prompt: |
+      执行任务: {input.description}
+
+      任务ID: {input.taskId}
+      计划参考: {vars.blackboardBase}/{input.taskId}/plan.json
+
+      执行要求:
+      1. 按计划执行
+      2. 记录关键决策
+      3. 产出物理证据
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/result.md
+    output: "{vars.blackboardBase}/{input.taskId}/result.md"
+    checkpoint: true
+
+  # ============================================
+  # Phase 3: 验证阶段
+  # ============================================
+  - name: validate
+    agent: validator
+    prompt: |
+      验证任务执行结果。
+
+      任务ID: {input.taskId}
+      执行结果: {vars.blackboardBase}/{input.taskId}/result.md
+
+      验证维度:
+      - 完整性: 是否完成所有要求？
+      - 质量: 是否达到标准？
+      - 证据: 是否有物理证据？
+
+      评分标准: ≥8.0 通过
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/validation.md
+    output: "{vars.blackboardBase}/{input.taskId}/validation.md"
+    outputMapping:
+      validation_score: "$.score"
+      passed: "$.passed"
+      issues: "$.issues"
+    checkpoint: true
+
+  # ============================================
+  # Phase 4: 完成通知
+  # ============================================
+  - name: notify
+    agent: "assistant"
+    prompt: |
+      ✅ 任务已完成
+
+      任务ID: {input.taskId}
+      任务描述: {input.description}
+      验证评分: {validation_score}/10
+
+      产出物: {vars.blackboardBase}/{input.taskId}/result.md
+    async: true
+
+# ============================================
+# 补偿操作
+# ============================================
+compensations:
+  execute:
+    action: "清理执行产物"
+    exec: "rm -rf {vars.blackboardBase}/{input.taskId}/result.md"
+
+# ============================================
+# 错误处理
+# ============================================
+onError:
+  escalate:
+    agent: gm
+    message: "任务 {input.taskId} 在步骤 {failed_step} 失败"
+    writeToBlackboard: "{vars.blackboardBase}/{input.taskId}/escalation.md"
+
+  retry:
+    maxAttempts: 2
+    backoff: "exponential"
+    initialDelay: "30s"

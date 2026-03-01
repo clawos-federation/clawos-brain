@@ -1,0 +1,350 @@
+{
+  "version": "4.4.0",
+  "lastUpdated": "2026-02-25T21:30:00Z",
+  "integration": "ClawOS Unified Architecture - 16 Agents (Command + PM + Workers)",
+  "architecture": {
+    "description": "ClawOS 三层架构：Command Layer (3) → PM Layer (3) → Workers (10)",
+    "layers": {
+      "Command": { "agents": 3, "description": "入口、决策、验证" },
+      "PM": { "agents": 3, "description": "项目管理，调度 Workers" },
+      "Workers": { "agents": 10, "description": "专业执行层" }
+    },
+    "costEfficiency": "88% 免费 (14/16 agents 使用 glm-5)",
+    "principles": [
+      "GM 只调用 PM 层，不直接调用 Workers",
+      "PM 调度 Workers 执行任务",
+      "Validator 独立验证质量"
+    ]
+  },
+  "agents": {
+    "assistant": {
+      "id": "assistant",
+      "name": "ClawOS Assistant",
+      "role": "人机交互入口",
+      "layer": "Command",
+      "primaryModel": "zai/glm-5",
+      "fallbackModel": "vectorengine-claude/claude-sonnet-4-6",
+      "soulFile": "~/.openclaw/agents/assistant/agent/SOUL.md",
+      "status": "active",
+      "isDefault": true,
+      "subagents": {
+        "allowAgents": ["gm"]
+      }
+    },
+    "gm": {
+      "id": "gm",
+      "name": "ClawOS GM",
+      "role": "总决策中枢",
+      "layer": "Command",
+      "primaryModel": "vectorengine-claude/claude-opus-4-6-thinking",
+      "fallbackModel": "vectorengine-codex/gpt-5.3-codex-xhigh",
+      "soulFile": "~/.openclaw/agents/gm/agent/SOUL.md",
+      "status": "active",
+      "subagents": {
+        "allowAgents": ["platform-pm", "coding-pm", "writing-pm", "validator"]
+      },
+      "constraints": {
+        "noDirectWorkerCall": true,
+        "description": "GM 只调用 PM 层，不直接调用 Workers"
+      }
+    },
+    "validator": {
+      "id": "validator",
+      "name": "ClawOS Validator",
+      "role": "质量验证",
+      "layer": "Command",
+      "primaryModel": "vectorengine-claude/claude-opus-4-6-thinking",
+      "fallbackModels": ["vectorengine-claude/claude-sonnet-4-6", "zai/glm-5"],
+      "soulFile": "~/.openclaw/agents/validator/agent/SOUL.md",
+      "status": "active"
+    },
+    "platform-pm": {
+      "id": "platform-pm",
+      "name": "ClawOS Platform PM",
+      "role": "系统维护 PM",
+      "layer": "PM",
+      "primaryModel": "zai/glm-5",
+      "fallbackModel": "vectorengine-claude/claude-sonnet-4-6",
+      "soulFile": "~/.openclaw/agents/platform-pm/agent/SOUL.md",
+      "status": "active",
+      "managedWorkers": ["github-ops", "sreagent", "securityagent", "browser-worker"],
+      "description": "管理 github-ops, sreagent, securityagent, browser-worker",
+      "subagents": {
+        "allowAgents": ["github-ops", "sreagent", "securityagent", "browser-worker"]
+      }
+    },
+    "coding-pm": {
+      "id": "coding-pm",
+      "name": "ClawOS Coding PM",
+      "role": "开发管理 PM",
+      "layer": "PM",
+      "primaryModel": "zai/glm-5",
+      "fallbackModel": "vectorengine-claude/claude-sonnet-4-6",
+      "soulFile": "~/.openclaw/agents/coding-pm/agent/SOUL.md",
+      "status": "active",
+      "managedWorkers": ["coder-frontend", "coder-backend", "tester-auto", "browser-worker"],
+      "description": "管理 coder-frontend, coder-backend, tester-auto, browser-worker (共享)",
+      "subagents": {
+        "allowAgents": ["coder-frontend", "coder-backend", "tester-auto", "browser-worker"]
+      }
+    },
+    "writing-pm": {
+      "id": "writing-pm",
+      "name": "ClawOS Writing PM",
+      "role": "写作管理 PM",
+      "layer": "PM",
+      "primaryModel": "zai/glm-5",
+      "fallbackModel": "vectorengine-claude/claude-sonnet-4-6",
+      "soulFile": "~/.openclaw/agents/writing-pm/agent/SOUL.md",
+      "status": "active",
+      "managedWorkers": ["writer-general", "researcher-web", "reviewer-content", "browser-worker"],
+      "description": "管理 writer-general, researcher-web, reviewer-content, browser-worker (共享)",
+      "subagents": {
+        "allowAgents": ["writer-general", "researcher-web", "reviewer-content", "browser-worker"]
+      }
+    },
+    "coder-frontend": {
+      "id": "coder-frontend",
+      "name": "ClawOS Coder Frontend",
+      "role": "前端开发",
+      "layer": "Worker",
+      "group": "开发组",
+      "primaryModel": "openai-codex/gpt-5.3-codex",
+      "fallbackModels": ["vectorengine-claude/claude-sonnet-4-6", "zai/glm-5"],
+      "soulFile": "~/.openclaw/agents/coder-frontend/SOUL.md",
+      "status": "active",
+      "managedBy": "coding-pm"
+    },
+    "coder-backend": {
+      "id": "coder-backend",
+      "name": "ClawOS Coder Backend",
+      "role": "后端开发",
+      "layer": "Worker",
+      "group": "开发组",
+      "primaryModel": "openai-codex/gpt-5.3-codex",
+      "fallbackModels": ["vectorengine-claude/claude-sonnet-4-6", "zai/glm-5"],
+      "soulFile": "~/.openclaw/agents/coder-backend/SOUL.md",
+      "status": "active",
+      "managedBy": "coding-pm"
+    },
+    "tester-auto": {
+      "id": "tester-auto",
+      "name": "ClawOS Tester Auto",
+      "role": "测试编写",
+      "layer": "Worker",
+      "group": "开发组",
+      "primaryModel": "openai-codex/gpt-5.3-codex",
+      "fallbackModels": ["vectorengine-claude/claude-sonnet-4-6", "zai/glm-5"],
+      "soulFile": "~/.openclaw/agents/tester-auto/SOUL.md",
+      "status": "active",
+      "managedBy": "coding-pm"
+    },
+    "writer-general": {
+      "id": "writer-general",
+      "name": "ClawOS Writer General",
+      "role": "内容写作",
+      "layer": "Worker",
+      "group": "写作组",
+      "primaryModel": "zai/glm-5",
+      "fallbackModel": "vectorengine-claude/claude-sonnet-4-6",
+      "soulFile": "~/.openclaw/agents/writer-general/SOUL.md",
+      "status": "active",
+      "managedBy": "writing-pm"
+    },
+    "researcher-web": {
+      "id": "researcher-web",
+      "name": "ClawOS Researcher Web",
+      "role": "调研分析",
+      "layer": "Worker",
+      "group": "写作组",
+      "primaryModel": "zai/glm-5",
+      "fallbackModels": ["vectorengine-gemini/gemini-3.1-pro-preview", "vectorengine-claude/claude-sonnet-4-6"],
+      "soulFile": "~/.openclaw/agents/researcher-web/SOUL.md",
+      "status": "active",
+      "managedBy": "writing-pm"
+    },
+    "reviewer-content": {
+      "id": "reviewer-content",
+      "name": "ClawOS Reviewer Content",
+      "role": "内容审核",
+      "layer": "Worker",
+      "group": "写作组",
+      "primaryModel": "zai/glm-5",
+      "fallbackModel": "vectorengine-claude/claude-sonnet-4-6",
+      "soulFile": "~/.openclaw/agents/reviewer-content/SOUL.md",
+      "status": "active",
+      "managedBy": "writing-pm"
+    },
+    "sreagent": {
+      "id": "sreagent",
+      "name": "ClawOS SREAgent",
+      "role": "运维专家",
+      "layer": "Worker",
+      "group": "系统组",
+      "primaryModel": "openai-codex/gpt-5.3-codex",
+      "fallbackModels": ["vectorengine-claude/claude-sonnet-4-6", "zai/glm-5"],
+      "soulFile": "~/.openclaw/agents/sreagent/SOUL.md",
+      "status": "active",
+      "managedBy": "platform-pm"
+    },
+    "securityagent": {
+      "id": "securityagent",
+      "name": "ClawOS SecurityAgent",
+      "role": "安全专家",
+      "layer": "Worker",
+      "group": "系统组",
+      "primaryModel": "openai-codex/gpt-5.3-codex",
+      "fallbackModels": ["vectorengine-claude/claude-sonnet-4-6", "zai/glm-5"],
+      "soulFile": "~/.openclaw/agents/securityagent/SOUL.md",
+      "status": "active",
+      "managedBy": "platform-pm"
+    },
+    "github-ops": {
+      "id": "github-ops",
+      "name": "ClawOS GitHub Ops",
+      "role": "Git 操作",
+      "layer": "Worker",
+      "group": "系统组",
+      "primaryModel": "openai-codex/gpt-5.3-codex",
+      "fallbackModels": ["vectorengine-claude/claude-sonnet-4-6", "zai/glm-5"],
+      "soulFile": "~/.openclaw/agents/github-ops/SOUL.md",
+      "status": "active",
+      "managedBy": "platform-pm"
+    },
+    "alpha-bridge": {
+      "id": "alpha-bridge",
+      "name": "Alpha Bridge",
+      "role": "Alpha 系统通信桥梁",
+      "layer": "Worker",
+      "group": "系统组",
+      "primaryModel": "zai/glm-5",
+      "soulFile": "~/.openclaw/agents/alpha-bridge/SOUL.md",
+      "status": "active",
+      "managedBy": "platform-pm",
+      "description": "本地与 Codespace Alpha 系统的唯一通信桥梁"
+    },
+    "browser-worker": {
+      "id": "browser-worker",
+      "name": "ClawOS Browser Worker",
+      "role": "浏览器自动化",
+      "layer": "Worker",
+      "group": "服务组",
+      "primaryModel": "zai/glm-5",
+      "fallbackModel": "vectorengine-claude/claude-sonnet-4-6",
+      "soulFile": "~/.openclaw/agents/browser-worker/SOUL.md",
+      "status": "active",
+      "managedBy": ["platform-pm", "coding-pm", "writing-pm"],
+      "description": "浏览器自动化 Worker，支持网页操作、数据抓取、截图等，可被多个 PM 共享调用",
+      "capabilities": ["browser-automation", "web-scraping", "screenshot-capture", "form-filling", "page-navigation"]
+    }
+  },
+  "tiers": {
+    "TITAN": {
+      "description": "最高决策层，使用最强推理模型 (Opus 4.6)",
+      "models": ["vectorengine-claude/claude-opus-4-6-thinking"],
+      "agents": ["gm", "validator"],
+      "count": 2
+    },
+    "HARDCORE": {
+      "description": "专业执行层，使用代码专用模型 (Codex OAuth)",
+      "models": ["openai-codex/gpt-5.3-codex"],
+      "agents": ["coder-frontend", "coder-backend", "tester-auto", "sreagent", "securityagent", "github-ops"],
+      "count": 6
+    },
+    "ECO": {
+      "description": "经济高效层，使用低成本模型 (GLM-5)",
+      "models": ["zai/glm-5"],
+      "agents": ["assistant", "platform-pm", "coding-pm", "writing-pm", "writer-general", "researcher-web", "reviewer-content", "alpha-bridge", "browser-worker"],
+      "count": 9
+    }
+  },
+  "layers": {
+    "Command": {
+      "description": "指挥层：入口、决策、验证",
+      "agents": ["assistant", "gm", "validator"],
+      "count": 3
+    },
+    "PM": {
+      "description": "PM层：项目管理，调度 Workers",
+      "agents": ["platform-pm", "coding-pm", "writing-pm"],
+      "count": 3
+    },
+    "Worker": {
+      "description": "执行层：专业执行",
+      "groups": {
+        "开发组": ["coder-frontend", "coder-backend", "tester-auto"],
+        "写作组": ["writer-general", "researcher-web", "reviewer-content"],
+        "系统组": ["sreagent", "securityagent", "github-ops", "alpha-bridge"],
+        "服务组": ["browser-worker"]
+      },
+      "count": 11
+    }
+  },
+  "providers": {
+    "zai": {
+      "name": "GLM Coding Plan",
+      "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
+      "cost": "免费"
+    },
+    "openai-codex": {
+      "name": "Codex OAuth",
+      "baseUrl": "https://api.openai.com/v1",
+      "cost": "付费"
+    },
+    "vectorengine-claude": {
+      "name": "VectorEngine Claude",
+      "baseUrl": "https://api.vectorengine.ai/v1",
+      "cost": "付费"
+    },
+    "vectorengine-gemini": {
+      "name": "VectorEngine Gemini",
+      "baseUrl": "https://api.vectorengine.ai/v1",
+      "cost": "付费"
+    }
+  },
+  "skills": {
+    "gm-task-evaluate": {
+      "name": "任务评估",
+      "category": "gm",
+      "path": "/Users/dongshenglu/openclaw-system/clawos/skills/gm-task-evaluate",
+      "status": "active"
+    },
+    "pm-team-assemble": {
+      "name": "团队组建",
+      "category": "pm",
+      "path": "/Users/dongshenglu/openclaw-system/clawos/skills/pm-team-assemble",
+      "status": "active"
+    },
+    "coding-workflow": {
+      "name": "编码工作流",
+      "category": "coding",
+      "path": "/Users/dongshenglu/openclaw-system/clawos/skills/coding-workflow",
+      "status": "active"
+    },
+    "writing-workflow": {
+      "name": "写作工作流",
+      "category": "writing",
+      "path": "/Users/dongshenglu/openclaw-system/clawos/skills/writing-workflow",
+      "status": "active"
+    },
+    "quality-check": {
+      "name": "质量检查",
+      "category": "qa",
+      "path": "/Users/dongshenglu/openclaw-system/clawos/skills/quality-check",
+      "status": "active"
+    },
+    "progress-report": {
+      "name": "进度汇报",
+      "category": "pm",
+      "path": "/Users/dongshenglu/openclaw-system/clawos/skills/progress-report",
+      "status": "active"
+    },
+    "blackboard": {
+      "name": "黑板读写",
+      "description": "统一的黑板读写操作，支持从共享黑板读取和写入数据（带文件锁）",
+      "category": "system",
+      "path": "/Users/dongshenglu/openclaw-system/clawos/skills/blackboard",
+      "status": "active"
+    }
+  }
+}

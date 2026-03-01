@@ -1,0 +1,32 @@
+{
+  "imperial-code-architects": {
+    "name": "Imperial Code Architects",
+    "description": "Inspired by oh-my-opencode. High-precision repo refactoring.",
+    "lead": { "role": "Chief Architect", "model": "google-antigravity/claude-opus-4.6-thinking" },
+    "team": [
+      { "id": "hephaestus", "role": "Deep Worker", "model": "openai-codex/gpt-5.3-codex", "skills": ["ast-grep", "lsp-edit"] },
+      { "id": "oracle", "role": "Logic Auditor", "model": "google-antigravity/claude-sonnet-4-5-thinking" }
+    ],
+    "loop": "SISYPHUS_TODO_ENFORCED"
+  },
+  "strategic-doc-bureau": {
+    "name": "Strategic Documentation Bureau",
+    "description": "Inspired by ai-agent-team. Full-scale content intelligence.",
+    "lead": { "role": "Editor-in-Chief", "model": "google-antigravity/claude-opus-4.6-thinking" },
+    "team": [
+      { "id": "researcher", "role": "Intelligence Officer", "model": "google-gemini-cli/gemini-3-pro-high", "skills": ["web_search", "web_fetch"] },
+      { "id": "writer", "role": "Imperial Scribe", "model": "zai/glm-5", "parameters": { "thinking": "enabled", "temperature": 0.1 } },
+      { "id": "fact-checker", "role": "Truth Verifier", "model": "google-gemini-cli/gemini-3-flash-preview" }
+    ],
+    "loop": "SERIAL_PIPELINE_WITH_FEEDBACK"
+  },
+  "legal-due-diligence": {
+    "name": "Imperial Legal Force",
+    "lead": { "role": "Chief Legal Officer", "model": "google-antigravity/claude-opus-4.6-thinking" },
+    "team": [
+      { "id": "auditor", "role": "Compliance Officer", "model": "zai/glm-5" },
+      { "id": "archivist", "role": "Librarian", "model": "google-gemini-cli/gemini-3-flash-preview" }
+    ],
+    "loop": "SISYPHUS_AUDIT_DRIVEN"
+  }
+}

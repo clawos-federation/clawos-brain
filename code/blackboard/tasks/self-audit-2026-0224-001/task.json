@@ -1,0 +1,17 @@
+{
+  "taskId": "self-audit-2026-0224-001",
+  "type": "system-audit",
+  "description": "ClawOS 全面自我审计 - 使用实际 Agent 架构",
+  "scope": [
+    "Agent 配置完整性审计",
+    "调度链有效性验证",
+    "Blackboard 状态一致性",
+    "工作流配置正确性",
+    "权限配置安全性",
+    "Souls 人格定义一致性"
+  ],
+  "priority": "P0",
+  "submittedBy": "assistant",
+  "submittedAt": "2026-02-24T16:00:00Z",
+  "status": "pending"
+}

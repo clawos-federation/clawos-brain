@@ -1,0 +1,254 @@
+# ClawOS 部署工作流
+# 基于 Lobster 工作流引擎
+# 部署流水线：构建 → 测试 → 部署 → 验证
+
+name: deploy-task
+description: 部署流水线，支持多环境部署
+
+# 输入参数
+input:
+  taskId: string          # 任务ID
+  projectId: string       # 项目ID
+  environment: string     # 部署环境: staging|production
+  version: string         # 部署版本
+  userId: string          # 用户ID
+
+# 全局变量
+vars:
+  blackboardBase: "~/clawos/blackboard/tasks"
+  deployBase: "~/clawos/deployments"
+
+# 工作流步骤
+steps:
+  # ============================================
+  # Phase 1: 预检查
+  # ============================================
+  - name: precheck
+    agent: sreagent
+    prompt: |
+      执行部署前检查。
+
+      任务ID: {input.taskId}
+      项目ID: {input.projectId}
+      目标环境: {input.environment}
+
+      检查项:
+      1. 代码是否已提交？
+      2. 测试是否全部通过？
+      3. 依赖是否就绪？
+      4. 配置是否正确？
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/precheck.md
+    output: "{vars.blackboardBase}/{input.taskId}/precheck.md"
+    outputMapping:
+      previous_version: "$.currentVersion"
+      checks_passed: "$.checksPassed"
+      warnings: "$.warnings"
+    checkpoint: true
+
+  # ============================================
+  # Phase 2: 构建
+  # ============================================
+  - name: build
+    agent: sreagent
+    prompt: |
+      构建项目。
+
+      任务ID: {input.taskId}
+      项目ID: {input.projectId}
+      版本: {input.version}
+
+      构建步骤:
+      1. 安装依赖
+      2. 编译代码
+      3. 打包产物
+      4. 生成镜像（如适用）
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/build.log
+    output: "{vars.blackboardBase}/{input.taskId}/build.log"
+    outputMapping:
+      build_artifact: "$.artifact"
+      build_time: "$.buildTime"
+      image_tag: "$.imageTag"
+    checkpoint: true
+
+  # ============================================
+  # Phase 3: 部署前测试
+  # ============================================
+  - name: test
+    agent: tester-auto
+    prompt: |
+      执行部署前测试。
+
+      任务ID: {input.taskId}
+      构建产物: {vars.deployBase}/{input.projectId}/{input.version}
+
+      测试类型:
+      1. 集成测试
+      2. E2E 测试
+      3. 性能基准测试
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/test-report.md
+    output: "{vars.blackboardBase}/{input.taskId}/test-report.md"
+    outputMapping:
+      test_result: "$.result"
+      test_passed: "$.passed"
+      test_failed: "$.failed"
+      performance_baseline: "$.performanceBaseline"
+    checkpoint: true
+
+  # ============================================
+  # Phase 4: 审批门控
+  # ============================================
+  - name: deploy-approval
+    approval:
+      required: true
+      timeout: "2h"
+      message: |
+        🚀 准备部署到 {input.environment}
+
+        项目: {input.projectId}
+        版本: {input.version}
+
+        测试结果: {test_result}
+        构建产物: {build_artifact}
+
+        确认部署？
+    onReject:
+      action: "notify-user"
+      message: "部署已取消"
+
+  # ============================================
+  # Phase 5: 部署
+  # ============================================
+  - name: deploy
+    agent: sreagent
+    prompt: |
+      执行部署。
+
+      任务ID: {input.taskId}
+      项目ID: {input.projectId}
+      环境: {input.environment}
+      版本: {input.version}
+
+      部署步骤:
+      1. 备份当前版本
+      2. 部署新版本
+      3. 健康检查
+      4. 流量切换
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/deploy.log
+    output: "{vars.blackboardBase}/{input.taskId}/deploy.log"
+    outputMapping:
+      deploy_time: "$.deployTime"
+      deployed_version: "$.version"
+      rollback_version: "$.previousVersion"
+    checkpoint: true
+
+  # ============================================
+  # Phase 6: 部署后验证
+  # ============================================
+  - name: verify
+    agent: validator
+    prompt: |
+      验证部署结果。
+
+      任务ID: {input.taskId}
+      环境: {input.environment}
+      部署版本: {input.version}
+
+      验证项:
+      1. 服务健康检查
+      2. 关键功能冒烟测试
+      3. 性能指标对比
+      4. 错误率监控
+
+      评分标准: 所有关键指标正常
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/verification.md
+    output: "{vars.blackboardBase}/{input.taskId}/verification.md"
+    outputMapping:
+      monitor_url: "$.monitorUrl"
+      health_status: "$.healthStatus"
+      failure_reason: "$.failureReason"
+    checkpoint: true
+
+  # ============================================
+  # Phase 7: 条件回滚
+  # ============================================
+  - name: rollback-check
+    loop:
+      condition: "verification.status == 'failed' && iteration < 1"
+      max: 1
+    steps:
+      - name: rollback
+        agent: sreagent
+        prompt: |
+          部署验证失败，执行回滚。
+
+          任务ID: {input.taskId}
+          环境: {input.environment}
+          回滚到: {previous_version}
+
+          回滚步骤:
+          1. 切换流量到旧版本
+          2. 恢复配置
+          3. 健康检查
+
+        output: "{vars.blackboardBase}/{input.taskId}/rollback.log"
+
+      - name: notify-rollback
+        agent: assistant
+        prompt: |
+          ⚠️ 部署失败，已自动回滚
+
+          任务ID: {input.taskId}
+          环境: {input.environment}
+          失败原因: {failure_reason}
+          当前版本: {previous_version}
+
+          请检查问题后重新部署。
+        async: true
+
+  # ============================================
+  # Phase 8: 完成通知
+  # ============================================
+  - name: notify-success
+    agent: assistant
+    prompt: |
+      ✅ 部署成功
+
+      任务ID: {input.taskId}
+      项目: {input.projectId}
+      环境: {input.environment}
+      版本: {input.version}
+
+      部署时间: {deploy_time}
+      验证结果: 通过
+
+      监控面板: {monitor_url}
+    async: true
+
+# ============================================
+# 补偿操作
+# ============================================
+compensations:
+  deploy:
+    action: "自动回滚到上一版本"
+    exec: |
+      # 回滚脚本
+      kubectl rollout undo deployment/{input.projectId} -n {input.environment}
+
+# ============================================
+# 错误处理
+# ============================================
+onError:
+  escalate:
+    agent: gm
+    message: "部署任务 {input.taskId} 在步骤 {failed_step} 失败"
+    writeToBlackboard: "{vars.blackboardBase}/{input.taskId}/escalation.md"
+
+  retry:
+    maxAttempts: 1
+    backoff: "fixed"
+    initialDelay: "60s"

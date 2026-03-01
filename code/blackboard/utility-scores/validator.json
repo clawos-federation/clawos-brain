@@ -1,0 +1,16 @@
+{
+  "agentId": "validator",
+  "tier": "command",
+  "utilityScore": 0.75,
+  "lastUpdated": "2026-02-27T09:42:28.233932",
+  "nominationEligible": false,
+  "initialized": true,
+  "history": [
+    {
+      "timestamp": "2026-02-27T09:42:28.233932",
+      "oldScore": null,
+      "newScore": 0.75,
+      "notes": "Initial score for command tier agent"
+    }
+  ]
+}

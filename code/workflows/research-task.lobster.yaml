@@ -1,0 +1,188 @@
+# ClawOS 调研分析工作流
+# 基于 Lobster 工作流引擎
+# 调研流水线：搜索 → 分析 → 验证 → 汇总
+
+name: research-task
+description: 调研分析流水线，支持多源信息整合
+
+# 输入参数
+input:
+  taskId: string          # 任务ID
+  topic: string           # 调研主题
+  depth: string           # 调研深度: quick|standard|deep
+  sources: array          # 信息来源: [web, docs, code, papers]
+  userId: string          # 用户ID
+
+# 全局变量
+vars:
+  blackboardBase: "~/clawos/blackboard/tasks"
+
+# 工作流步骤
+steps:
+  # ============================================
+  # Phase 1: 搜索阶段
+  # ============================================
+  - name: search
+    parallel:
+      maxConcurrent: 3
+      items: "{input.sources}"
+    agent: researcher-web
+    prompt: |
+      从 {item} 搜索关于 "{input.topic}" 的信息。
+
+      任务ID: {input.taskId}
+      调研深度: {input.depth}
+
+      搜索要求:
+      1. 收集相关资料
+      2. 记录来源链接
+      3. 提取关键信息
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/sources/{item}.md
+    output: "{vars.blackboardBase}/{input.taskId}/sources/{item}.md"
+    checkpoint: true
+
+  # ============================================
+  # Phase 2: 分析阶段
+  # ============================================
+  - name: analyze
+    agent: researcher-web
+    prompt: |
+      分析收集到的所有信息。
+
+      任务ID: {input.taskId}
+      调研主题: {input.topic}
+      信息来源: {vars.blackboardBase}/{input.taskId}/sources/
+
+      分析要求:
+      1. 整合多源信息
+      2. 识别关键发现
+      3. 发现矛盾或争议点
+      4. 形成初步结论
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/analysis.md
+    output: "{vars.blackboardBase}/{input.taskId}/analysis.md"
+    checkpoint: true
+
+  # ============================================
+  # Phase 3: 验证阶段
+  # ============================================
+  - name: validate
+    agent: reviewer-content
+    prompt: |
+      验证调研结果的质量和准确性。
+
+      任务ID: {input.taskId}
+      分析报告: {vars.blackboardBase}/{input.taskId}/analysis.md
+
+      验证维度:
+      - 来源可信度 (25%)
+      - 逻辑一致性 (25%)
+      - 信息完整性 (25%)
+      - 结论可靠性 (25%)
+
+      评分标准: ≥8.0 通过
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/validation.md
+    output: "{vars.blackboardBase}/{input.taskId}/validation.md"
+    outputMapping:
+      validation_score: "$.score"
+      credibility: "$.credibility"
+      completeness: "$.completeness"
+    checkpoint: true
+
+  # ============================================
+  # Phase 4: 补充调研循环
+  # ============================================
+  - name: supplement-loop
+    loop:
+      condition: "validation.score < 8 && iteration < 2"
+      max: 2
+    steps:
+      - name: identify-gaps
+        agent: researcher-web
+        prompt: |
+          根据验证结果，识别信息缺口。
+
+          验证报告: {vars.blackboardBase}/{input.taskId}/validation.md
+
+          输出需要补充调研的方向。
+        output: "{vars.blackboardBase}/{input.taskId}/gaps-{iteration}.md"
+
+      - name: supplement-search
+        agent: researcher-web
+        prompt: |
+          补充调研缺失的信息。
+        output: "{vars.blackboardBase}/{input.taskId}/supplement-{iteration}.md"
+
+      - name: re-validate
+        agent: reviewer-content
+        prompt: |
+          重新验证更新后的调研结果。
+        output: "{vars.blackboardBase}/{input.taskId}/validation.md"
+
+  # ============================================
+  # Phase 5: 汇总报告
+  # ============================================
+  - name: compile
+    agent: writer-general
+    prompt: |
+      编写最终调研报告。
+
+      任务ID: {input.taskId}
+      调研主题: {input.topic}
+      分析报告: {vars.blackboardBase}/{input.taskId}/analysis.md
+      验证结果: {vars.blackboardBase}/{input.taskId}/validation.md
+
+      报告结构:
+      1. 执行摘要
+      2. 关键发现
+      3. 详细分析
+      4. 结论与建议
+      5. 参考资料
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/report.md
+    output: "{vars.blackboardBase}/{input.taskId}/report.md"
+    checkpoint: true
+
+  # ============================================
+  # Phase 6: 完成通知
+  # ============================================
+  - name: notify
+    agent: assistant
+    prompt: |
+      ✅ 调研任务已完成
+
+      任务ID: {input.taskId}
+      调研主题: {input.topic}
+      调研深度: {input.depth}
+      验证评分: {validation_score}/10
+
+      报告位置: {vars.blackboardBase}/{input.taskId}/report.md
+    async: true
+
+# ============================================
+# 补偿操作
+# ============================================
+compensations:
+  search:
+    action: "清理搜索结果"
+    exec: "rm -rf {vars.blackboardBase}/{input.taskId}/sources/*"
+
+  analyze:
+    action: "清理分析结果"
+    exec: "rm -rf {vars.blackboardBase}/{input.taskId}/analysis.md"
+
+# ============================================
+# 错误处理
+# ============================================
+onError:
+  escalate:
+    agent: gm
+    message: "调研任务 {input.taskId} 在步骤 {failed_step} 失败"
+    writeToBlackboard: "{vars.blackboardBase}/{input.taskId}/escalation.md"
+
+  retry:
+    maxAttempts: 2
+    backoff: "exponential"
+    initialDelay: "30s"

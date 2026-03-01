@@ -1,0 +1,73 @@
+{
+  "version": "2.0.1",
+  "updated": "2026-02-25",
+  "description": "基于实际可用模型的配置",
+  
+  "models": {
+    "zai/glm-5": {
+      "name": "GLM-5 Max",
+      "tier": "standard",
+      "cost": "low",
+      "use": "通用、高频、后台任务"
+    },
+    "vectorengine-claude/claude-opus-4-6-thinking": {
+      "name": "Claude Opus 4.6 Thinking",
+      "tier": "titan",
+      "cost": "high",
+      "use": "决策、质检、风险判断、高质量写作"
+    },
+    "openai-codex/gpt-5.3-codex": {
+      "name": "GPT-5.3 Codex",
+      "tier": "hardcore",
+      "cost": "medium",
+      "use": "代码分析、编写、审查"
+    }
+  },
+  
+  "agentModels": {
+    "command": {
+      "assistant": "zai/glm-5",
+      "gm": "vectorengine-claude/claude-opus-4-6-thinking",
+      "validator": "vectorengine-claude/claude-opus-4-6-thinking",
+      "platform-pm": "zai/glm-5"
+    },
+    "pm": {
+      "coding-pm": "zai/glm-5",
+      "writing-pm": "zai/glm-5",
+      "research-pm": "zai/glm-5"
+    },
+    "workers": {
+      "analyst-code": "openai-codex/gpt-5.3-codex",
+      "analyst-frontend": "openai-codex/gpt-5.3-codex",
+      "analyst-backend": "openai-codex/gpt-5.3-codex",
+      "analyst-writing": "zai/glm-5",
+      "analyst-research": "zai/glm-5",
+      
+      "creator-code": "openai-codex/gpt-5.3-codex",
+      "creator-frontend": "openai-codex/gpt-5.3-codex",
+      "creator-backend": "openai-codex/gpt-5.3-codex",
+      "creator-writing": {
+        "default": "zai/glm-5",
+        "critical": "vectorengine-claude/claude-opus-4-6-thinking",
+        "note": "根据任务重要度动态选择，writing-pm 评估 priority"
+      },
+      
+      "critic-code": "openai-codex/gpt-5.3-codex",
+      "critic-writing": "zai/glm-5",
+      "critic-research": "zai/glm-5",
+      "critic-risk": "vectorengine-claude/claude-opus-4-6-thinking",
+      
+      "executor-code": "zai/glm-5",
+      "executor-test": "zai/glm-5",
+      
+      "connector-research": "zai/glm-5"
+    }
+  },
+  
+  "costStrategy": {
+    "highFrequency": "zai/glm-5",
+    "critical": "vectorengine-claude/claude-opus-4-6-thinking",
+    "codeTasks": "openai-codex/gpt-5.3-codex",
+    "background": "zai/glm-5"
+  }
+}

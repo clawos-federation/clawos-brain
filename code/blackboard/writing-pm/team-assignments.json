@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-02-24T00:00:00Z",
+  "teams": {
+    "writing": {
+      "lead": "writer-general",
+      "members": ["writer-general"],
+      "status": "available"
+    },
+    "research": {
+      "lead": "researcher-web",
+      "members": ["researcher-web"],
+      "status": "available"
+    },
+    "review": {
+      "lead": "reviewer-content",
+      "members": ["reviewer-content"],
+      "status": "available"
+    }
+  },
+  "activeAssignments": []
+}

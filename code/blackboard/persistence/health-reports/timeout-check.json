@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-02-26T15:34:00.271863+00:00",
+  "check_type": "timeouts",
+  "tasks_checked": 3,
+  "timed_out_tasks": [],
+  "stuck_tasks": [],
+  "by_status": {
+    "pending": 2,
+    "unknown": 1
+  },
+  "by_priority": {
+    "P3": 1,
+    "P2": 1,
+    "P0": 1
+  },
+  "pending_queue": {
+    "exists": true,
+    "stale_tasks": [],
+    "total_pending": 1,
+    "last_updated_hours_ago": 3.791743056944444
+  },
+  "healthy": true,
+  "critical_issues": []
+}

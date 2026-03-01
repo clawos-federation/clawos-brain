@@ -1,0 +1,157 @@
+{
+  "system": {
+    "name": "OpenClaw Enterprise System",
+    "version": "1.0.0",
+    "description": "Henry (Assistant) + GM Agent (General Manager) Multi-Agent Architecture"
+  },
+  "agents": {
+    "henry": {
+      "name": "Henry",
+      "role": "Chairman's Assistant (董事长助理)",
+      "model": "opencode/kimi-k2.5-free",
+      "backup_model": "zhipu-coding/glm-free",
+      "temperature": 0.4,
+      "priority": "speed",
+      "max_tokens": 8192,
+      "traits": {
+        "first_principles": 3,
+        "socratic_questioning": 3,
+        "resilience": 3,
+        "eclectic_integration": 3,
+        "innovation": 2,
+        "agentic": 3,
+        "openclaw_mastery": 3
+      },
+      "thresholds": {
+        "simple_task_steps": 3,
+        "response_time_seconds": 2
+      },
+      "responsibilities": [
+        "Quick intent understanding",
+        "Basic resource estimation",
+        "Simple task decomposition",
+        "Basic progress monitoring",
+        "Basic quality expectations",
+        "Simple risk identification",
+        "Simple outcome summarization"
+      ]
+    },
+    "gm_agent": {
+      "name": "GM Agent",
+      "role": "General Manager (总经理)",
+      "model": "vectorengine-claude/claude-opus-4-5-20251101",
+      "backup_model": "google/antigravity-gemini-3-pro-high",
+      "temperature": 0.2,
+      "priority": "quality",
+      "max_tokens": 16384,
+      "traits": {
+        "first_principles": 5,
+        "socratic_questioning": 5,
+        "resilience": 4,
+        "eclectic_integration": 4,
+        "innovation": 5,
+        "agentic": 5,
+        "openclaw_mastery": 5
+      },
+      "quality_gate": {
+        "threshold": 7.0,
+        "dimensions": {
+          "accuracy": {"weight": 0.30, "min_score": 8.0},
+          "completeness": {"weight": 0.20, "min_score": 7.0},
+          "professionalism": {"weight": 0.20, "min_score": 7.0},
+          "risk_assessment": {"weight": 0.15, "min_score": 7.0},
+          "maintainability": {"weight": 0.15, "min_score": 7.0}
+        }
+      },
+      "trigger_conditions": {
+        "complexity": {"steps": "> 3"},
+        "multi_domain": {"agents": "> 1"},
+        "risk_level": ["high", "critical"],
+        "task_types": ["legal", "architectural", "strategic"]
+      },
+      "responsibilities": [
+        "Deep requirement analysis",
+        "Cost and resource assessment",
+        "Complex task decomposition",
+        "Detailed progress monitoring",
+        "Detailed quality standards (7/10 threshold)",
+        "Detailed risk analysis",
+        "Deep integration and recommendations"
+      ]
+    }
+  },
+  "specialized_agents": {
+    "DevAgent": {
+      "role": "Development",
+      "model": "zhipu-coding/glm-5",
+      "trigger": "Development tasks"
+    },
+    "LegalAgent": {
+      "role": "Legal",
+      "model": "zhipu-coding/glm-4-7",
+      "trigger": "Legal tasks"
+    },
+    "MarketingAgent": {
+      "role": "Marketing",
+      "model": "google/antigravity-gemini-3-pro-high",
+      "trigger": "Marketing tasks"
+    },
+    "ResearchAgent": {
+      "role": "Research",
+      "model": "anthropic/claude-opus-4-5-20251101",
+      "trigger": "Research tasks"
+    },
+    "DesignerAgent": {
+      "role": "Design",
+      "model": "google/antigravity-gemini-3-pro-high",
+      "trigger": "Design tasks"
+    },
+    "QAAgent": {
+      "role": "Quality Assurance",
+      "model": "zhipu-coding/glm-5",
+      "trigger": "QA tasks"
+    },
+    "DocsAgent": {
+      "role": "Technical Writer",
+      "model": "google/antigravity-gemini-3-pro-high",
+      "trigger": "Documentation tasks"
+    }
+  },
+  "workflow": {
+    "simple_task_flow": [
+      "User Request",
+      "Henry Initial Screening",
+      "Henry Direct Execution",
+      "Henry Summary"
+    ],
+    "complex_task_flow": [
+      "User Request",
+      "Henry Initial Screening",
+      "GM Agent Activation",
+      "Deep First Principles Analysis",
+      "Strategic Planning",
+      "Agent Distribution (百花齐放)",
+      "Parallel Execution",
+      "Mandatory Quality Gate (7/10)",
+      "Strategic Innovation",
+      "Henry Summary"
+    ]
+  },
+  "quality_badges": {
+    "excellent": {"score": "9-10", "badge": "🌟 EXCELLENT"},
+    "approved": {"score": "8-8.9", "badge": "✅ APPROVED"},
+    "acceptable": {"score": "7-7.9", "badge": "⚠️ ACCEPTABLE"},
+    "rejected": {"score": "<7", "badge": "❌ REJECTED"}
+  },
+  "paths": {
+    "workspace": "/Users/henry/openclaw-system/workspace",
+    "integrations": "/Users/henry/openclaw-system/workspace/integrations",
+    "agents": "/Users/henry/openclaw-system/workspace/agents",
+    "memory": "/Users/henry/openclaw-system/workspace/memory"
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "/Users/henry/openclaw-system/workspace/logs/opencawl.log",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  }
+}

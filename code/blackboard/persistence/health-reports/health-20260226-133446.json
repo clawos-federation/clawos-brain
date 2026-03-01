@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-02-26T13:34:46.828131+00:00",
+  "version": "2026.3",
+  "overall": {
+    "score": 90.0,
+    "status": "healthy",
+    "status_emoji": "🟢",
+    "issues": [
+      "Heartbeat is stale (>1 hour old)",
+      "Heartbeat is stale"
+    ],
+    "is_critical": false
+  },
+  "nodes": {
+    "healthy": false,
+    "healthy_count": 17,
+    "unhealthy_count": 0,
+    "total_nodes": 17,
+    "heartbeat_healthy": false,
+    "tier_summary": {
+      "command": {
+        "total": 3,
+        "healthy": 3
+      },
+      "pm": {
+        "total": 3,
+        "healthy": 3
+      },
+      "worker": {
+        "total": 11,
+        "healthy": 11
+      }
+    }
+  },
+  "blackboard": {
+    "healthy": true,
+    "directories_ok": true,
+    "files_ok": true,
+    "schemas_ok": true
+  },
+  "timeouts": {
+    "healthy": true,
+    "tasks_checked": 2,
+    "timed_out_count": 0,
+    "stuck_count": 0,
+    "by_status": {
+      "unknown": 1,
+      "pending": 1
+    }
+  },
+  "critical_issues": [
+    "Heartbeat is stale (>1 hour old)",
+    "Heartbeat is stale"
+  ]
+}

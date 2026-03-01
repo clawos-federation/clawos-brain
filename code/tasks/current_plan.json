@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-02-24T22:58:51.373508",
+  "system_status": {
+    "timestamp": "2026-02-24T22:58:51.372878",
+    "evolution_gen": 47,
+    "backtest_pass_rate": 0.0,
+    "avg_return": 0.0,
+    "signal_count": 6,
+    "improvement_areas": []
+  },
+  "tasks": [
+    {
+      "priority": "P0",
+      "type": "strategy",
+      "action": "参数优化",
+      "reason": "回测通过率仅 0%",
+      "params": {
+        "mutation_rate": 0.5
+      }
+    },
+    {
+      "priority": "P2",
+      "type": "backtest",
+      "action": "测试更多股票",
+      "reason": "平均收益 0.0% 偏低",
+      "params": {
+        "limit": 30
+      }
+    }
+  ],
+  "next_run": "每20分钟自动执行"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "scout_2026-02-12",
+  "startTime": "2026-02-12T00:58:01.004Z",
+  "task": "每周社区情报搜集",
+  "status": "active",
+  "sharedContext": {},
+  "entries": [],
+  "messages": [],
+  "proposals": [
+    {
+      "id": "prop_1770857881004",
+      "timestamp": "2026-02-12T00:58:01.004Z",
+      "agentId": "researchagent",
+      "title": "本周技术进化内参",
+      "description": "1. 推荐工具: Browser-use (for high-level web tasks), MCP-Gmail (for automation)\n2. 社区热议: undefined\n3. 落地建议: Next week, we should integrate Browser-use via the new SkillManager loader.",
+      "status": "pending"
+    }
+  ]
+}

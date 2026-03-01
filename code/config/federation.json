@@ -1,0 +1,74 @@
+{
+  "nodeId": "server",
+  "name": "Mac mini 主脑",
+  "federation": "ClawOS",
+  "version": "2.0.0",
+  "role": "coordinator",
+  
+  "brain": {
+    "isBrain": true,
+    "url": "http://127.0.0.1:18789",
+    "externalUrl": null
+  },
+  
+  "sync": {
+    "blackboard": "~/.openclaw/clawos/blackboard/",
+    "memory": "~/.openclaw/clawos/brain/memory/",
+    "mode": "local-first",
+    "r2Enabled": false,
+    "gitSync": {
+      "enabled": false,
+      "repo": "clawos-federation/clawos-brain",
+      "branch": "main",
+      "schedule": "weekly-sunday-0400"
+    }
+  },
+  
+  "agents": {
+    "command": ["assistant", "gm", "validator", "platform-pm"],
+    "pm": ["coding-pm", "writing-pm", "research-pm"],
+    "workers": "dynamic"
+  },
+  
+  "model": {
+    "primary": "zai/glm-5",
+    "fallback": "zai/glm-5"
+  },
+  
+  "memory": {
+    "L1": "SimpleMem",
+    "L2": "EverMemOS",
+    "L3": "MemOS",
+    "L4": "GitHub"
+  },
+  
+  "channels": {
+    "imessage": {
+      "enabled": true,
+      "cliPath": "/opt/homebrew/bin/imsg",
+      "dmPolicy": "allowlist"
+    },
+    "telegram": {
+      "enabled": false
+    }
+  },
+  
+  "heartbeat": {
+    "interval": "20 minutes",
+    "stateFile": "~/.openclaw/clawos/blackboard/federation/heartbeat/server.json"
+  },
+  
+  "alpha": {
+    "enabled": true,
+    "mode": "local",
+    "schedule": {
+      "tradingHours": ["9:35", "10:30", "13:35", "14:30"],
+      "dailyReport": "18:00",
+      "morningReport": "9:00",
+      "weeklyReport": "Sunday 10:00"
+    }
+  },
+  
+  "created": "2026-02-26",
+  "updated": "2026-02-26"
+}

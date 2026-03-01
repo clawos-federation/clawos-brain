@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "gatewayMode": "local",
+  "trustedProxiesConfigured": true,
+  "trustedProxies": [
+    "127.0.0.1",
+    "::1"
+  ],
+  "action": "no_change",
+  "patchDraft": null
+}

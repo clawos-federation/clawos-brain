@@ -1,0 +1,39 @@
+{
+  "version": "1.0.0",
+  "priorities": {
+    "P1": {
+      "name": "Knowledge Update",
+      "description": "Update knowledge base with new information",
+      "trigger": ["daily-harvest", "pattern-detected", "external-source"],
+      "maxConcurrent": 2,
+      "timeoutMinutes": 30,
+      "idleThresholdMinutes": 15
+    },
+    "P2": {
+      "name": "Capability Training",
+      "description": "Improve agent capabilities based on feedback",
+      "trigger": ["utility-score-drop", "performance-threshold", "scheduled"],
+      "maxConcurrent": 1,
+      "timeoutMinutes": 60,
+      "idleThresholdMinutes": 60
+    },
+    "P3": {
+      "name": "Domain Exploration",
+      "description": "Explore new domains for capability expansion",
+      "trigger": ["scheduled", "manual", "route-map"],
+      "maxConcurrent": 1,
+      "timeoutMinutes": 120,
+      "idleThresholdMinutes": 120
+    },
+    "P4": {
+      "name": "SOUL Draft",
+      "description": "Create/update agent SOUL templates",
+      "trigger": ["pattern-consolidated", "manual", "boss-approval"],
+      "maxConcurrent": 1,
+      "timeoutMinutes": 180,
+      "idleThresholdMinutes": 240
+    }
+  },
+  "priorityOrder": ["P1", "P2", "P3", "P4"],
+  "realTaskPreemption": true
+}

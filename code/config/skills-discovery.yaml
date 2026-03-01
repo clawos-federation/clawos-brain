@@ -1,0 +1,47 @@
+# Skills Discovery Configuration
+# Phase 1: Automatic skill discovery from ClawHub
+
+discovery:
+  enabled: true
+  source: clawhub
+  schedule: daily  # Scan once per day
+  autoScan: true
+  cronExpression: "0 9 * * *"  # 9:00 AM daily
+  
+security:
+  requireApproval: true  # Human must approve all new skills
+  sandboxTest: true      # Test in sandbox before production
+  virusScan: false       # ClawHub is trusted source
+  maxPendingSkills: 10   # Max skills waiting for approval
+  
+paths:
+  cacheDir: ~/clawos/hub/cache
+  pendingDir: ~/clawos/hub/pending
+  skillsDir: ~/clawos/skills
+  proposalsDir: ~/clawos/blackboard/proposals/skills-discovery
+  auditLog: ~/clawos/blackboard/audit/extensions
+  
+clawhub:
+  apiUrl: https://clawhub.com/api/v1
+  # Token should be set via CLAWHUB_TOKEN environment variable
+  categories:
+    - workflow
+    - integration
+    - utility
+    - security
+  excludeCategories:
+    - experimental
+    - deprecated
+    
+notification:
+  onNewSkill: true
+  onApproval: true
+  onInstall: true
+  channels:
+    - blackboard  # Write to blackboard
+    # - telegram   # Optional: notify via Telegram
+    
+audit:
+  logAllActions: true
+  retentionDays: 90
+  includeMetadata: true

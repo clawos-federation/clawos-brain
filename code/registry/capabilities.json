@@ -1,0 +1,314 @@
+{
+  "version": "2.0.0",
+  "updated": "2026-02-25",
+  "description": "ClawOS 角色能力索引 - PM选角用",
+  
+  "commandLayer": {
+    "assistant": {
+      "name": "助理 Agent",
+      "tier": "command",
+      "description": "唯一移动端人机入口，3秒确认，转发gm",
+      "permanent": true,
+      "path": "souls/command/assistant.soul.md"
+    },
+    "gm": {
+      "name": "总经理 Agent",
+      "tier": "command",
+      "description": "全局决策中枢，评估任务，任命PM，最终验收",
+      "permanent": true,
+      "path": "souls/command/gm.soul.md"
+    },
+    "validator": {
+      "name": "验证 Agent",
+      "tier": "command",
+      "description": "独立质检，评分<8打回，永远不主动联系任何人",
+      "permanent": true,
+      "path": "souls/command/validator.soul.md"
+    },
+    "platform-pm": {
+      "name": "平台 PM",
+      "tier": "command",
+      "description": "系统进化负责人，Role Registry管理，唯一可修改角色模板",
+      "permanent": true,
+      "path": "souls/command/platform-pm.soul.md"
+    }
+  },
+  
+  "pmLayer": {
+    "coding-pm": {
+      "name": "开发 PM",
+      "tier": "pm",
+      "domain": "软件开发",
+      "description": "接收开发任务，选Worker，编排流程",
+      "canSummon": ["analyst-code", "creator-code", "critic-code", "executor-code", "analyst-frontend", "creator-frontend", "analyst-backend", "creator-backend", "executor-test"],
+      "path": "souls/pm/coding-pm.soul.md"
+    },
+    "writing-pm": {
+      "name": "写作 PM",
+      "tier": "pm",
+      "domain": "内容创作",
+      "description": "接收写作任务，选Worker，编排流程",
+      "canSummon": ["analyst-writing", "creator-writing", "critic-writing", "analyst-research", "connector-writing"],
+      "path": "souls/pm/writing-pm.soul.md"
+    },
+    "research-pm": {
+      "name": "研究 PM",
+      "tier": "pm",
+      "domain": "调研分析",
+      "description": "接收研究任务，选Worker，编排流程",
+      "canSummon": ["analyst-research", "connector-research", "critic-research"],
+      "path": "souls/pm/research-pm.soul.md"
+    }
+  },
+  
+  "workerMatrix": {
+    "functions": {
+      "analyst": {
+        "name": "分析师",
+        "mindset": "分解·理解·推理",
+        "description": "拆解问题，找规律，输出洞察",
+        "output": ["分析报告", "方案设计", "洞察总结"]
+      },
+      "creator": {
+        "name": "创造者",
+        "mindset": "生成·想象·表达",
+        "description": "产出内容，代码，方案",
+        "output": ["代码", "文章", "方案", "设计"]
+      },
+      "critic": {
+        "name": "评审者",
+        "mindset": "质疑·验证·改进",
+        "description": "找问题，提建议，独立判断",
+        "output": ["审查报告", "改进建议", "问题清单"]
+      },
+      "executor": {
+        "name": "执行者",
+        "mindset": "执行·工具·流程",
+        "description": "调API，跑脚本，操作系统",
+        "output": ["执行结果", "操作记录", "数据"]
+      },
+      "connector": {
+        "name": "连接者",
+        "mindset": "整合·综述·传递",
+        "description": "汇总多源信息，跨域连接",
+        "output": ["综述", "总结", "桥接报告"]
+      }
+    },
+    
+    "domains": {
+      "code": {"name": "编程", "node": "coding"},
+      "frontend": {"name": "前端", "node": "coding"},
+      "backend": {"name": "后端", "node": "coding"},
+      "test": {"name": "测试", "node": "coding"},
+      "writing": {"name": "写作", "node": "server"},
+      "research": {"name": "研究", "node": "server"},
+      "system": {"name": "系统", "node": "server"},
+      "security": {"name": "安全", "node": "server"},
+      "academic": {"name": "学术", "node": "writing"},
+      "technical-doc": {"name": "技术文档", "node": "writing"},
+      "marketing": {"name": "营销", "node": "writing"},
+      "strategy": {"name": "策略", "node": "quant"},
+      "data": {"name": "数据", "node": "quant"},
+      "risk": {"name": "风控", "node": "quant"},
+      "backtest": {"name": "回测", "node": "quant"}
+    },
+    
+    "roles": [
+      {
+        "id": "analyst-code",
+        "function": "analyst",
+        "domain": "code",
+        "capabilities": ["代码分析", "架构评估", "技术选型", "问题诊断"],
+        "path": "souls/workers/analyst/code.soul.md",
+        "memoryKey": "role:analyst-code",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "analyst-frontend",
+        "function": "analyst",
+        "domain": "frontend",
+        "capabilities": ["前端架构", "性能分析", "用户体验评估", "组件设计"],
+        "path": "souls/workers/analyst/frontend.soul.md",
+        "memoryKey": "role:analyst-frontend",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "analyst-backend",
+        "function": "analyst",
+        "domain": "backend",
+        "capabilities": ["后端架构", "API设计", "数据库优化", "系统分析"],
+        "path": "souls/workers/analyst/backend.soul.md",
+        "memoryKey": "role:analyst-backend",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "analyst-writing",
+        "function": "analyst",
+        "domain": "writing",
+        "capabilities": ["内容分析", "主题拆解", "大纲设计", "受众分析"],
+        "path": "souls/workers/analyst/writing.soul.md",
+        "memoryKey": "role:analyst-writing",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "analyst-research",
+        "function": "analyst",
+        "domain": "research",
+        "capabilities": ["信息检索", "数据分析", "文献综述", "批判性阅读"],
+        "path": "souls/workers/analyst/research.soul.md",
+        "memoryKey": "role:analyst-research",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "analyst-system",
+        "function": "analyst",
+        "domain": "system",
+        "capabilities": ["系统分析", "性能诊断", "容量规划", "故障排查"],
+        "path": "souls/workers/analyst/system.soul.md",
+        "memoryKey": "role:analyst-system",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "creator-code",
+        "function": "creator",
+        "domain": "code",
+        "capabilities": ["代码编写", "功能实现", "重构", "算法设计"],
+        "path": "souls/workers/creator/code.soul.md",
+        "memoryKey": "role:creator-code",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "creator-frontend",
+        "function": "creator",
+        "domain": "frontend",
+        "capabilities": ["UI开发", "组件实现", "样式设计", "交互实现"],
+        "path": "souls/workers/creator/frontend.soul.md",
+        "memoryKey": "role:creator-frontend",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "creator-backend",
+        "function": "creator",
+        "domain": "backend",
+        "capabilities": ["API开发", "数据库操作", "服务实现", "后端逻辑"],
+        "path": "souls/workers/creator/backend.soul.md",
+        "memoryKey": "role:creator-backend",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "creator-writing",
+        "function": "creator",
+        "domain": "writing",
+        "capabilities": ["长文写作", "结构设计", "叙事", "论证"],
+        "path": "souls/workers/creator/writing.soul.md",
+        "memoryKey": "role:creator-writing",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "critic-code",
+        "function": "critic",
+        "domain": "code",
+        "capabilities": ["代码审查", "安全分析", "性能优化", "测试策略"],
+        "path": "souls/workers/critic/code.soul.md",
+        "memoryKey": "role:critic-code",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "critic-writing",
+        "function": "critic",
+        "domain": "writing",
+        "capabilities": ["内容审查", "逻辑检查", "风格修正", "可读性优化"],
+        "path": "souls/workers/critic/writing.soul.md",
+        "memoryKey": "role:critic-writing",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "critic-research",
+        "function": "critic",
+        "domain": "research",
+        "capabilities": ["事实核查", "来源验证", "偏见识别", "质量评估"],
+        "path": "souls/workers/critic/research.soul.md",
+        "memoryKey": "role:critic-research",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "critic-security",
+        "function": "critic",
+        "domain": "security",
+        "capabilities": ["安全审计", "漏洞扫描", "权限检查", "合规审查"],
+        "path": "souls/workers/critic/security.soul.md",
+        "memoryKey": "role:critic-security",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "executor-code",
+        "function": "executor",
+        "domain": "code",
+        "capabilities": ["代码执行", "脚本运行", "构建部署", "Git操作"],
+        "path": "souls/workers/executor/code.soul.md",
+        "memoryKey": "role:executor-code",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "executor-test",
+        "function": "executor",
+        "domain": "test",
+        "capabilities": ["测试执行", "覆盖率统计", "回归测试", "性能测试"],
+        "path": "souls/workers/executor/test.soul.md",
+        "memoryKey": "role:executor-test",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "executor-system",
+        "function": "executor",
+        "domain": "system",
+        "capabilities": ["系统操作", "服务管理", "监控部署", "故障恢复"],
+        "path": "souls/workers/executor/system.soul.md",
+        "memoryKey": "role:executor-system",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "connector-writing",
+        "function": "connector",
+        "domain": "writing",
+        "capabilities": ["内容整合", "跨域连接", "综述撰写", "信息桥接"],
+        "path": "souls/workers/connector/writing.soul.md",
+        "memoryKey": "role:connector-writing",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      },
+      {
+        "id": "connector-research",
+        "function": "connector",
+        "domain": "research",
+        "capabilities": ["信息汇总", "跨源整合", "知识连接", "趋势综述"],
+        "path": "souls/workers/connector/research.soul.md",
+        "memoryKey": "role:connector-research",
+        "performance": {"avgScore": 0, "tasksCompleted": 0}
+      }
+    ]
+  },
+  
+  "selection": {
+    "description": "PM 选角算法",
+    "algorithm": "capability-matching",
+    "rules": [
+      "1. 分析任务需要的 capabilities",
+      "2. 在可召唤角色中匹配 capabilities",
+      "3. 按匹配度排序",
+      "4. 选择 top-N 角色（通常 2-4 个）",
+      "5. 考虑 performance.avgScore 历史表现"
+    ]
+  },
+  
+  "performance": {
+    "metrics": ["avgScore", "tasksCompleted", "avgTime", "reworkRate"],
+    "updateTrigger": "task-complete",
+    "thresholds": {
+      "excellent": 9.0,
+      "good": 8.0,
+      "acceptable": 7.5,
+      "needsImprovement": 7.0,
+      "replace": 6.5
+    }
+  }
+}

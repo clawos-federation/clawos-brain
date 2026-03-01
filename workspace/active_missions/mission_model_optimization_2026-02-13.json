@@ -1,0 +1,21 @@
+{
+  "missionId": "GM-MODEL-OPT-2026-02-13",
+  "owner": "gm",
+  "assignee": "devagent",
+  "priority": "P0",
+  "status": "assigned",
+  "title": "全员大脑优化模型落地",
+  "objective": [
+    "将 devagent 默认模型切换为 openai-codex/gpt-5.3-codex",
+    "将 testagent 默认模型设置为 google-gemini-cli/gemini-3-flash-preview",
+    "将 henry 默认模型设置为 google-gemini-cli/gemini-3-pro-preview",
+    "统一 openai 模型命名空间到 openai-codex/*",
+    "提交变更报告与回滚方案"
+  ],
+  "constraints": [
+    "禁止影响 gm 主模型（保持 claude-opus-4-5-thinking）",
+    "变更前备份 openclaw.json",
+    "变更后执行连接烟测并记录"
+  ],
+  "createdAt": "2026-02-13T11:09:00+08:00"
+}

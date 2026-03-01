@@ -1,0 +1,180 @@
+name: Daily Knowledge Harvest
+
+on:
+  schedule:
+    - cron: '0 19 * * *'  # UTC 19:00 = 北京时间 03:00
+  workflow_dispatch:
+    inputs:
+      sources:
+        description: 'Harvest sources (comma-separated: github,arxiv,federation,all)'
+        required: false
+        default: 'all'
+      min_score:
+        description: 'Minimum knowledge score threshold'
+        required: false
+        default: '7.0'
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout brain
+        uses: actions/checkout@v4
+        with:
+          repository: clawos-federation/clawos-brain
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 pyyaml openai
+      
+      - name: Get date info
+        id: date
+        run: |
+          echo "date=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+          echo "week=$(date +%Y-W%V)" >> $GITHUB_OUTPUT
+
+      # === Harvest from GitHub ===
+      - name: Harvest from GitHub
+        if: ${{ github.event.inputs.sources == 'all' || github.event.inputs.sources == 'github' || github.event.inputs.sources == '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          python scripts/harvest_github.py \
+            --keywords "multi-agent LLM AI agentic workflow" \
+            --min-stars 100 \
+            --days 7 \
+            --output harvest/github.json
+      
+      # === Harvest from arXiv ===
+      - name: Harvest from arXiv
+        if: ${{ github.event.inputs.sources == 'all' || github.event.inputs.sources == 'arxiv' || github.event.inputs.sources == '' }}
+        run: |
+          python scripts/harvest_arxiv.py \
+            --categories "cs.AI cs.CL cs.MA cs.LG" \
+            --days 7 \
+            --output harvest/arxiv.json
+
+      # === NEW: Harvest from clawos-federation repositories ===
+      - name: Harvest from clawos-federation
+        if: ${{ github.event.inputs.sources == 'all' || github.event.inputs.sources == 'federation' || github.event.inputs.sources == '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          python scripts/harvest_federation.py \
+            --org clawos-federation \
+            --repos "clawos-core,clawos-agents,clawos-tools,clawos-templates" \
+            --since-days 7 \
+            --include-issues \
+            --include-discussions \
+            --include-wiki \
+            --output harvest/federation.json
+      
+      # === NEW: Knowledge filtering with ML scoring ===
+      - name: Filter and score knowledge
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python scripts/filter_harvest.py \
+            --inputs harvest/*.json \
+            --threshold ${{ github.event.inputs.min_score || '7.0' }} \
+            --scoring-model "gpt-4o-mini" \
+            --criteria "relevance,quality,novelty,actionability" \
+            --output harvest/approved.json \
+            --rejected harvest/rejected.json
+      
+      # === NEW: Knowledge deduplication ===
+      - name: Deduplicate knowledge
+        run: |
+          python scripts/deduplicate_knowledge.py \
+            --input harvest/approved.json \
+            --existing knowledge/ \
+            --similarity-threshold 0.85 \
+            --output harvest/unique.json
+      
+      # === NEW: Categorize and tag knowledge ===
+      - name: Categorize knowledge
+        run: |
+          python scripts/categorize_knowledge.py \
+            --input harvest/unique.json \
+            --categories "architecture,patterns,tools,agents,workflows,research" \
+            --auto-tag \
+            --output harvest/categorized.json
+      
+      # === Generate knowledge markdown ===
+      - name: Generate knowledge
+        run: |
+          python scripts/knowledge_to_markdown.py \
+            --input harvest/categorized.json \
+            --output knowledge/daily/${{ steps.date.outputs.date }}/
+      
+      # === NEW: Update knowledge index ===
+      - name: Update knowledge index
+        run: |
+          python scripts/update_knowledge_index.py \
+            --knowledge-dir knowledge/ \
+            --index-file knowledge/index.json
+      
+      # === NEW: Create PR for review ===
+      - name: Create Harvest PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "harvest: daily knowledge ${{ steps.date.outputs.date }}"
+          title: "📚 Daily Knowledge Harvest - ${{ steps.date.outputs.date }}"
+          body: |
+            ## 🦞 Knowledge Harvest Report
+            
+            **Date**: ${{ steps.date.outputs.date }}
+            **Week**: ${{ steps.date.outputs.week }}
+            
+            ### Sources Harvested
+            - GitHub (multi-agent, LLM, AI)
+            - arXiv (cs.AI, cs.CL, cs.MA, cs.LG)
+            - clawos-federation repositories
+            
+            ### Statistics
+            ```json
+            $(cat harvest/stats.json 2>/dev/null || echo '{}')
+            ```
+            
+            ### Categories
+            - Architecture
+            - Patterns
+            - Tools
+            - Agents
+            - Workflows
+            - Research
+            
+            ---
+            
+            **Review**: Please verify knowledge quality before merging.
+            
+          branch: harvest/daily-${{ steps.date.outputs.date }}
+          labels: harvest,knowledge,auto-generated
+          reviewers: ${{ secrets.HARVEST_REVIEWERS }}
+      
+      # === Notify on completion ===
+      - name: Notify
+        if: success()
+        run: |
+          python scripts/send_notification.py \
+            --type harvest-complete \
+            --date ${{ steps.date.outputs.date }} \
+            --stats harvest/stats.json \
+            --webhook ${{ secrets.NOTIFICATION_WEBHOOK }}
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          python scripts/send_notification.py \
+            --type harvest-failed \
+            --date ${{ steps.date.outputs.date }} \
+            --webhook ${{ secrets.NOTIFICATION_WEBHOOK }}

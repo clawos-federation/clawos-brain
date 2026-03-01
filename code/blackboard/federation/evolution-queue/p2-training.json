@@ -1,0 +1,23 @@
+{
+  "priority": "P2",
+  "lastUpdated": "2026-02-27T00:00:00+08:00",
+  "tasks": [
+    {
+      "id": "p2-2026-0227-001",
+      "type": "capability-training",
+      "status": "pending",
+      "created": "2026-02-27T08:00:00+08:00",
+      "payload": {
+        "source": "utility-score-drop",
+        "target": "agents/",
+        "action": "improve-agent-performance",
+        "agentId": null
+      },
+      "assignedTo": null,
+      "attempts": 0,
+      "maxAttempts": 2
+    }
+  ],
+  "processing": [],
+  "completed": []
+}

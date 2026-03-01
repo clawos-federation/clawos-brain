@@ -1,0 +1,443 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.2.24",
+    "lastTouchedAt": "2026-02-26T13:37:05.148Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-02-26T13:37:05.134Z",
+    "lastRunVersion": "2026.2.24",
+    "lastRunCommand": "doctor",
+    "lastRunMode": "local"
+  },
+  "auth": {
+    "profiles": {
+      "zai:default": {
+        "provider": "zai",
+        "mode": "api_key"
+      }
+    }
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "zai": {
+        "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "glm-5",
+            "name": "GLM-5 Max",
+            "reasoning": true,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 200000,
+            "maxTokens": 128000
+          }
+        ]
+      },
+      "vectorengine-claude": {
+        "baseUrl": "https://api.vectorengine.ai/v1",
+        "api": "openai-completions",
+        "cache": {
+          "enabled": true,
+          "ttl": 3600
+        },
+        "models": [
+          {
+            "id": "claude-opus-4-6-thinking",
+            "name": "Claude Opus 4.6 Thinking",
+            "reasoning": true,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 15,
+              "output": 75,
+              "cacheRead": 1.5,
+              "cacheWrite": 18.75
+            },
+            "contextWindow": 200000,
+            "maxTokens": 128000
+          }
+        ]
+      },
+      "openai-codex": {
+        "baseUrl": "https://api.openai.com/v1",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "gpt-5.3-codex",
+            "name": "GPT-5.3 Codex",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 5,
+              "output": 15,
+              "cacheRead": 0.5,
+              "cacheWrite": 6.25
+            },
+            "contextWindow": 200000,
+            "maxTokens": 128000
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "zai/glm-5"
+      },
+      "workspace": "~/clawos/workspaces",
+      "memorySearch": {
+        "provider": "local"
+      },
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "maxConcurrent": 8,
+      "subagents": {
+        "maxConcurrent": 6,
+        "maxSpawnDepth": 2,
+        "maxChildrenPerAgent": 4
+      }
+    },
+    "list": [
+      {
+        "id": "assistant",
+        "default": true,
+        "name": "ClawOS Assistant",
+        "model": {
+          "primary": "zai/glm-5"
+        },
+        "heartbeat": {
+          "every": "15m",
+          "target": "last",
+          "prompt": "检查 ~/clawos/blackboard/tasks/ 下的任务状态。如有变化，通知用户；无变化则回复 HEARTBEAT_OK。检测到 escalation.md 时立即通知。"
+        },
+        "subagents": {
+          "allowAgents": [
+            "gm"
+          ]
+        }
+      },
+      {
+        "id": "gm",
+        "name": "ClawOS GM",
+        "workspace": "~/clawos/workspaces/gm",
+        "model": {
+          "primary": "vectorengine-claude/claude-opus-4-6-thinking",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        },
+        "subagents": {
+          "allowAgents": [
+            "writing-pm",
+            "coding-pm",
+            "research-pm",
+            "platform-pm",
+            "validator"
+          ]
+        }
+      },
+      {
+        "id": "validator",
+        "name": "ClawOS Validator",
+        "model": {
+          "primary": "vectorengine-claude/claude-opus-4-6-thinking",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        }
+      },
+      {
+        "id": "platform-pm",
+        "name": "ClawOS Platform PM",
+        "model": {
+          "primary": "vectorengine-claude/claude-opus-4-6-thinking",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        },
+        "heartbeat": {
+          "every": "1h",
+          "target": "last",
+          "prompt": "Platform PM 定时任务：1) 检查系统健康状态 2) 检查 ~/clawos/blackboard/proposals/ 待处理提案 3) 清理过期 checkpoint 4) 生成运行报告到 ~/clawos/blackboard/platform-pm/"
+        },
+        "subagents": {
+          "allowAgents": [
+            "sreagent",
+            "securityagent",
+            "alpha-bridge",
+            "github-ops",
+            "browser-worker"
+          ]
+        }
+      },
+      {
+        "id": "writing-pm",
+        "name": "ClawOS Writing PM",
+        "model": {
+          "primary": "zai/glm-5"
+        },
+        "subagents": {
+          "allowAgents": [
+            "writer-general",
+            "reviewer-content",
+            "browser-worker"
+          ]
+        }
+      },
+      {
+        "id": "research-pm",
+        "name": "ClawOS Research PM",
+        "model": {
+          "primary": "zai/glm-5"
+        },
+        "subagents": {
+          "allowAgents": [
+            "researcher-web",
+            "browser-worker"
+          ]
+        }
+      },
+      {
+        "id": "coding-pm",
+        "name": "ClawOS Coding PM",
+        "model": {
+          "primary": "zai/glm-5"
+        },
+        "subagents": {
+          "allowAgents": [
+            "coder-frontend",
+            "coder-backend",
+            "tester-auto",
+            "github-ops",
+            "browser-worker"
+          ]
+        }
+      },
+      {
+        "id": "writer-general",
+        "name": "Writer General",
+        "model": {
+          "primary": "zai/glm-5"
+        }
+      },
+      {
+        "id": "researcher-web",
+        "name": "Researcher Web",
+        "model": {
+          "primary": "zai/glm-5"
+        }
+      },
+      {
+        "id": "reviewer-content",
+        "name": "Reviewer Content",
+        "model": {
+          "primary": "zai/glm-5"
+        }
+      },
+      {
+        "id": "coder-frontend",
+        "name": "Coder Frontend",
+        "model": {
+          "primary": "openai-codex/gpt-5.3-codex",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        }
+      },
+      {
+        "id": "coder-backend",
+        "name": "Coder Backend",
+        "model": {
+          "primary": "openai-codex/gpt-5.3-codex",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        }
+      },
+      {
+        "id": "tester-auto",
+        "name": "Tester Auto",
+        "model": {
+          "primary": "openai-codex/gpt-5.3-codex",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        }
+      },
+      {
+        "id": "github-ops",
+        "name": "GitHub Ops",
+        "model": {
+          "primary": "openai-codex/gpt-5.3-codex",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        }
+      },
+      {
+        "id": "sreagent",
+        "name": "ClawOS SREAgent",
+        "model": {
+          "primary": "openai-codex/gpt-5.3-codex",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        }
+      },
+      {
+        "id": "securityagent",
+        "name": "ClawOS SecurityAgent",
+        "model": {
+          "primary": "openai-codex/gpt-5.3-codex",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        }
+      },
+      {
+        "id": "alpha-bridge",
+        "name": "Alpha Bridge",
+        "model": {
+          "primary": "zai/glm-5"
+        },
+        "subagents": {
+          "allowAgents": []
+        }
+      },
+      {
+        "id": "browser-worker",
+        "name": "ClawOS Browser Worker",
+        "model": {
+          "primary": "zai/glm-5"
+        },
+        "subagents": {
+          "allowAgents": []
+        }
+      },
+      {
+        "id": "analyst-code",
+        "name": "Analyst Code",
+        "model": {
+          "primary": "openai-codex/gpt-5.3-codex",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        }
+      },
+      {
+        "id": "analyst-research",
+        "name": "Analyst Research",
+        "model": {
+          "primary": "zai/glm-5"
+        }
+      },
+      {
+        "id": "creator-code",
+        "name": "Creator Code",
+        "model": {
+          "primary": "openai-codex/gpt-5.3-codex",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        }
+      },
+      {
+        "id": "creator-writing",
+        "name": "Creator Writing",
+        "model": {
+          "primary": "zai/glm-5"
+        }
+      },
+      {
+        "id": "critic-code",
+        "name": "Critic Code",
+        "model": {
+          "primary": "openai-codex/gpt-5.3-codex",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        }
+      },
+      {
+        "id": "executor-system",
+        "name": "Executor System",
+        "model": {
+          "primary": "openai-codex/gpt-5.3-codex",
+          "fallbacks": [
+            "zai/glm-5"
+          ]
+        }
+      },
+      {
+        "id": "connector-research",
+        "name": "Connector Research",
+        "model": {
+          "primary": "zai/glm-5"
+        }
+      }
+    ]
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "cron": {
+    "enabled": true,
+    "maxConcurrentRuns": 2,
+    "sessionRetention": "24h"
+  },
+  "channels": {
+    "imessage": {
+      "enabled": true,
+      "cliPath": "/opt/homebrew/bin/imsg",
+      "dbPath": "/Users/dongshenglu/Library/Messages/chat.db",
+      "dmPolicy": "allowlist",
+      "allowFrom": [
+        "+8613701900881"
+      ],
+      "groupPolicy": "allowlist"
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "all",
+    "auth": {
+      "token": "004bcb8699bdfaf0108e61da3bdd6bd7984fa74c811d05435488aa27620a80e8"
+    },
+    "trustedProxies": [
+      "127.0.0.1",
+      "::1",
+      "100.71.170.104",
+      "100.76.189.39"
+    ]
+  },
+  "plugins": {
+    "entries": {
+      "imessage": {
+        "enabled": true
+      }
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "ClawOS v5 Feature Flags - All features enabled",
+  "version": "5.0.0-active",
+  "lastUpdated": "2026-02-27",
+  
+  "features": {
+    "identity-system": {
+      "enabled": true,
+      "description": "Unified agent identity with cryptographic signatures",
+      "dependencies": [],
+      "riskLevel": "medium",
+      "rollbackCommand": "Disable identity verification in agent configs"
+    },
+    "a2a-registry": {
+      "enabled": true,
+      "description": "Agent-to-Agent communication registry",
+      "dependencies": ["identity-system"],
+      "riskLevel": "medium",
+      "rollbackCommand": "Remove A2A endpoints, revert to direct PM calls"
+    },
+    "evolution-scheduler": {
+      "enabled": true,
+      "description": "Automated self-improvement scheduling system",
+      "dependencies": [],
+      "riskLevel": "high",
+      "rollbackCommand": "Disable cron jobs, stop evolution daemon"
+    },
+    "utility-scoring": {
+      "enabled": true,
+      "description": "Contribution value tracking and reputation system",
+      "dependencies": [],
+      "riskLevel": "low",
+      "rollbackCommand": "Disable utility collection, use static priorities"
+    },
+    "memory-l3": {
+      "enabled": true,
+      "description": "Long-term memory with vector embeddings",
+      "dependencies": [],
+      "riskLevel": "medium",
+      "rollbackCommand": "Revert to L1/L2 memory only"
+    },
+    "risk-controller": {
+      "enabled": true,
+      "description": "Autonomous risk assessment and mitigation",
+      "dependencies": [],
+      "riskLevel": "high",
+      "rollbackCommand": "Disable risk automation, require manual approval"
+    }
+  },
+  
+  "featureGroups": {
+    "core-v5": ["identity-system", "a2a-registry"],
+    "evolution": ["evolution-scheduler", "utility-scoring"],
+    "memory": ["memory-l3"],
+    "safety": ["risk-controller"]
+  },
+  
+  "rolloutPhases": {
+    "phase1": ["utility-scoring"],
+    "phase2": ["memory-l3", "identity-system"],
+    "phase3": ["a2a-registry"],
+    "phase4": ["risk-controller"],
+    "phase5": ["evolution-scheduler"]
+  },
+  
+  "emergencyStop": {
+    "enabled": false,
+    "reason": null,
+    "disabledBy": null,
+    "timestamp": null
+  }
+}

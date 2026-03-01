@@ -1,0 +1,212 @@
+{
+  "federation": "ClawOS",
+  "version": "2.1.0",
+  "updated": "2026-02-27",
+  
+  "nodes": {
+    "server": {
+      "id": "server",
+      "name": "Mac mini 主脑",
+      "repo": "clawos-federation/clawos-node-server",
+      "role": "coordinator",
+      "alwaysOnline": true,
+      "device": "Mac mini 16G",
+      "location": "Local",
+      "model": "zai/glm-5",
+      "memory": ["SimpleMem", "EverMemOS", "MemOS"],
+      "agents": ["assistant", "gm", "validator", "platform-pm", "coding-pm", "writing-pm", "research-pm", "sreagent", "securityagent", "github-ops", "browser-worker"],
+      "onlineHours": "workdays",
+      "features": [
+        "Command Layer 常驻",
+        "PM Layer 管理",
+        "Alpha 量化调度",
+        "iMessage 通知"
+      ]
+    },
+    
+    "coding": {
+      "id": "coding",
+      "name": "编程节点",
+      "repo": "clawos-federation/clawos-node-coding",
+      "device": "MacBook Pro",
+      "specialization": "software-engineering",
+      "model": "deepseek/deepseek-v3",
+      "memory": ["SimpleMem", "EverMemOS"],
+      "agents": ["coding-pm", "coder-frontend", "coder-backend", "tester-auto"],
+      "onlineHours": "workdays"
+    },
+    
+    "writing": {
+      "id": "writing", 
+      "name": "写作节点",
+      "repo": "clawos-federation/clawos-node-writing",
+      "device": "Windows PC",
+      "specialization": "academic-writing",
+      "model": "anthropic/claude-opus-4-6",
+      "memory": ["EverMemOS", "SimpleMem"],
+      "agents": ["writing-pm", "writer-general", "researcher-web", "reviewer-content"],
+      "onlineHours": "workdays"
+    },
+    
+    "quant": {
+      "id": "quant",
+      "name": "量化节点",
+      "repo": "clawos-federation/clawos-node-quant",
+      "device": "GitHub Codespace",
+      "specialization": "quantitative-finance",
+      "model": "anthropic/claude-sonnet-4-6",
+      "memory": ["SimpleMem", "EverMemOS"],
+      "agents": ["quant-pm", "analyst-strategy", "creator-strategy", "critic-risk", "executor-backtest"],
+      "onlineHours": "market-hours",
+      "riskManager": {
+        "enabled": true,
+        "hardRules": [
+          "单笔交易 ≤ 总资产5%",
+          "单日亏损 > 2% 立即停止所有交易",
+          "单笔 > 1万元 必须人工确认",
+          "任何规则不允许被其他Agent覆盖"
+        ]
+      }
+    },
+    
+    "mobile": {
+      "id": "mobile",
+      "name": "移动节点",
+      "device": "MacBook",
+      "specialization": "mobile-office",
+      "model": "zai/glm-5",
+      "memory": ["SimpleMem", "EverMemOS"],
+      "agents": ["assistant", "platform-pm", "connector-research"],
+      "onlineHours": "on-demand",
+      "features": [
+        "随时响应用户需求",
+        "轻量级任务处理",
+        "信息收集和汇总",
+        "与其他节点协作"
+      ]
+    }
+  },
+  
+  "sync": {
+    "brainToNodes": {
+      "schedule": "weekly-sunday-0400",
+      "description": "总仓同步到各节点"
+    },
+    "nodesToBrain": {
+      "schedule": "weekly-sunday-0200", 
+      "description": "节点精华PR到总仓"
+    },
+    "crossPollination": {
+      "schedule": "monthly-first",
+      "description": "跨节点知识受粉"
+    }
+  },
+  
+  "evolution": {
+    "harvestSchedule": "daily-0300",
+    "fitnessEvaluation": "weekly",
+    "eliminationThreshold": 0.75,
+    "challengerFrequency": "quarterly",
+    
+    "performanceMetrics": [
+      "avgScore",
+      "tasksCompleted", 
+      "successRate",
+      "avgTime",
+      "crossNodeReferences"
+    ],
+    
+    "diversityProtection": {
+      "models": "不同节点使用不同基础模型",
+      "infoSources": "不同节点收割不同信息源",
+      "forcedPollination": "每月强制跨域受粉",
+      "challengerMechanism": "每季度引入挑战者竞争"
+    }
+  },
+  
+  "memory": {
+    "layers": {
+      "L1": {
+        "system": "SimpleMem",
+        "purpose": "工作记忆·当前会话·极速",
+        "cost": "Token消耗低30倍"
+      },
+      "L2": {
+        "system": "EverMemOS",
+        "purpose": "情节记忆·带因果链·中期",
+        "accuracy": "93%推理准确率"
+      },
+      "L3": {
+        "system": "MemOS",
+        "purpose": "跨任务长期记忆·跨设备迁移",
+        "feature": "MIP协议"
+      },
+      "L4": {
+        "system": "GitHub memory分支",
+        "purpose": "永久·可克隆·跨节点",
+        "feature": "版本控制"
+      }
+    },
+    
+    "syncFlow": {
+      "toGitHub": "任务完成 → EverMemOS提炼 → MemOS评估 → 有价值的PR到memory分支",
+      "fromGitHub": "每天凌晨拉取最新知识 → 注入MemOS → Agent下次任务可召回"
+    }
+  },
+  
+  "blackboard": {
+    "type": "hybrid",
+    "local": "~/clawos/blackboard/",
+    "shared": "Cloudflare R2",
+    "cost": "$0.015/GB/月",
+    
+    "structure": {
+      "tasks": "任务数据",
+      "gm": "GM决策日志",
+      "roles": "角色实例状态",
+      "escalations": "紧急上报",
+      "shared": "跨节点共享数据"
+    }
+  },
+  
+  "security": {
+    "multiUser": {
+      "dmScope": "per-channel-peer",
+      "sandbox": "non-main"
+    },
+    
+    "redLines": [
+      "进化不能修改安全规则本身",
+      "金融操作超过阈值必须人工确认",
+      "新Skill必须隔离测试",
+      "进化历史完整可追溯",
+      "人随时可以暂停整个系统"
+    ],
+    
+    "version": "openclaw >= 2026.2.17"
+  },
+  
+  "cost": {
+    "estimated": {
+      "phase1": "$25-35/月",
+      "fullFiveNodes": "$40-60/月"
+    },
+    
+    "breakdown": {
+      "assistant": "~$3/月 (Haiku高频便宜)",
+      "gm": "~$5/月 (Opus低频)",
+      "workers": "~$10/月 (Sonnet中等)",
+      "cron": "~$5/月 (Haiku)",
+      "memory": "~$1/月 (提取API)",
+      "server": "$5/月 (DigitalOcean)",
+      "github": "$4/月 (Pro计划)",
+      "r2": "$0 (早期免费)"
+    },
+    
+    "savings": [
+      "Cron/Heartbeat用Haiku而非Opus（成本降80%）",
+      "启用Prompt Cache（降90%）",
+      "后台任务用Sonnet/Haiku"
+    ]
+  }
+}

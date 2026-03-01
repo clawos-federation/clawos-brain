@@ -1,0 +1,23 @@
+{
+  "priority": "P3",
+  "lastUpdated": "2026-02-27T00:00:00+08:00",
+  "tasks": [
+    {
+      "id": "p3-2026-0227-001",
+      "type": "domain-exploration",
+      "status": "pending",
+      "created": "2026-02-27T08:00:00+08:00",
+      "payload": {
+        "source": "route-map",
+        "target": "capabilities/",
+        "action": "explore-new-domain",
+        "domain": null
+      },
+      "assignedTo": null,
+      "attempts": 0,
+      "maxAttempts": 1
+    }
+  ],
+  "processing": [],
+  "completed": []
+}

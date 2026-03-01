@@ -1,0 +1,53 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-02-27",
+  "description": "Evolution goals for Alpha quant node - set by server (coordinator)",
+  
+  "currentGoals": [
+    {
+      "id": "alpha-goal-001",
+      "priority": "P1",
+      "title": "提升涨停股预测准确率",
+      "target": "准确率达到 60% 以上",
+      "metrics": ["prediction_accuracy", "true_positive_rate"],
+      "deadline": "2026-03-15",
+      "setBy": "server",
+      "status": "active"
+    },
+    {
+      "id": "alpha-goal-002",
+      "priority": "P2",
+      "title": "优化资金流向因子",
+      "target": "提升尾盘时段预测效果",
+      "metrics": ["late_session_accuracy"],
+      "deadline": "2026-03-20",
+      "setBy": "server",
+      "status": "pending"
+    }
+  ],
+  
+  "completedGoals": [
+    {
+      "id": "alpha-goal-000",
+      "title": "基础涨停预测系统搭建",
+      "completedAt": "2026-02-27",
+      "result": "limit_up_hunter_v1 策略上线，每日 TOP 10 预测"
+    }
+  ],
+  
+  "knowledgeHarvest": {
+    "sources": [
+      "量化交易论文",
+      "游资行为研究",
+      "市场情绪指标"
+    ],
+    "frequency": "daily",
+    "pushTo": "blackboard/alpha/knowledge/"
+  },
+  
+  "constraints": {
+    "noRealTrading": true,
+    "signalOnly": true,
+    "maxCandidates": 10
+  }
+}

@@ -1,0 +1,223 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OpenClaw Agent Definition",
+  "description": "Schema for defining OpenClaw professional agents",
+  "type": "object",
+  "required": ["id", "version", "name", "description", "profile", "model"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique agent identifier (e.g., 'devagent')",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version (e.g., '1.0.0')",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable agent name (e.g., '代码专家')"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of what this agent does"
+    },
+    "profile": {
+      "type": "object",
+      "description": "Agent's role, goals, and constraints",
+      "required": ["role"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "description": "The agent's role/persona (e.g., '资深软件工程师')"
+        },
+        "goals": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of goals the agent aims to achieve"
+        },
+        "constraints": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Constraints the agent must follow"
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "description": "Model configuration",
+      "required": ["primary"],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "description": "Primary model to use (e.g., 'claude-3.5-sonnet')"
+        },
+        "fallback": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Fallback models if primary fails"
+        },
+        "provider": {
+          "type": "string",
+          "description": "Model provider (e.g., 'anthropic', 'openai', 'zai')",
+          "default": "openai"
+        }
+      }
+    },
+    "systemPrompt": {
+      "type": "string",
+      "description": "System prompt for the agent (can reference prompt.md file)"
+    },
+    "promptFile": {
+      "type": "string",
+      "description": "Path to prompt.md file (alternative to systemPrompt)"
+    },
+    "memory": {
+      "type": "object",
+      "description": "Memory configuration",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["none", "short", "long", "hybrid"],
+          "default": "hybrid"
+        },
+        "shortTerm": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "maxTurns": { "type": "number", "default": 10 }
+          }
+        },
+        "longTerm": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "storage": { "type": "string", "enum": ["file", "vector"], "default": "file" },
+            "embeddings": { "type": "string", "default": "text-embedding-3-small" }
+          }
+        },
+        "semantic": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "index": { "type": "string", "default": "MEMORY.md" }
+          }
+        }
+      }
+    },
+    "planning": {
+      "type": "object",
+      "description": "Planning capability configuration",
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "method": {
+          "type": "string",
+          "enum": ["chain_of_thought", "tree_of_thought", "react"],
+          "default": "chain_of_thought"
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "description": "Skills (tools) this agent can use",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string" },
+          "required": { "type": "boolean", "default": false },
+          "permission": {
+            "type": "string",
+            "enum": ["read-only", "read-write", "admin"],
+            "default": "read-write"
+          },
+          "sandbox": { "type": "boolean", "default": false },
+          "config": { "type": "object" }
+        }
+      }
+    },
+    "reflection": {
+      "type": "object",
+      "description": "Self-reflection configuration",
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "autoSelfCritique": { "type": "boolean", "default": false },
+        "improvePrompt": { "type": "string" }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "List of capabilities this agent provides",
+      "items": { "type": "string" }
+    },
+    "guardrails": {
+      "type": "object",
+      "description": "Guardrails and safety constraints",
+      "properties": {
+        "maxTokens": { "type": "number", "default": 4000 },
+        "allowedOperations": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["read", "write", "search"]
+        },
+        "blockedPatterns": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "requireHumanApproval": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Operations requiring human approval"
+        }
+      }
+    },
+    "observability": {
+      "type": "object",
+      "description": "Observability configuration",
+      "properties": {
+        "logging": { "type": "boolean", "default": true },
+        "metrics": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["latency", "tokens", "cost"]
+        },
+        "tracing": { "type": "boolean", "default": false }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "description": "Quality gate configuration",
+      "required": ["threshold"],
+      "properties": {
+        "threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Minimum quality score (0-10) for agent to pass"
+        },
+        "tests": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Test files for quality verification"
+        },
+        "autoTest": { "type": "boolean", "default": false }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata",
+      "properties": {
+        "author": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "estimatedCost": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "default": "medium"
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

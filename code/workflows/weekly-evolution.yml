@@ -1,0 +1,215 @@
+name: Weekly Evolution
+
+on:
+  schedule:
+    - cron: '0 18 * * 0'  # UTC 18:00 周日 = 北京时间 02:00
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run without committing changes'
+        required: false
+        default: 'false'
+
+jobs:
+  evolve:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout brain
+        uses: actions/checkout@v4
+        with:
+          repository: clawos-federation/clawos-brain
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/checkout@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install pyyaml openai numpy pandas scikit-learn
+      
+      - name: Get week info
+        id: week
+        run: |
+          echo "week=$(date +%Y-W%V)" >> $GITHUB_OUTPUT
+          echo "start=$(date -d 'last monday' +%Y-%m-%d)" >> $GITHUB_OUTPUT
+          echo "end=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      # === Extract role memories ===
+      - name: Extract role memories
+        env:
+          BLACKBOARD_URL: ${{ secrets.BLACKBOARD_URL }}
+        run: |
+          python scripts/extract_memories.py \
+            --blackboard $BLACKBOARD_URL \
+            --start ${{ steps.week.outputs.start }} \
+            --end ${{ steps.week.outputs.end }} \
+            --output memory/weekly/
+      
+      # === NEW: Cross-node knowledge pollination ===
+      - name: Cross-pollinate knowledge
+        run: |
+          python scripts/cross_pollinate.py \
+            --memory memory/weekly/ \
+            --knowledge knowledge/ \
+            --output memory/pollination/ \
+            --algorithm "similarity-based" \
+            --min-similarity 0.7 \
+            --max-pollinations 50
+        continue-on-error: true
+      
+      # === NEW: Advanced role performance evaluation ===
+      - name: Evaluate role performance
+        run: |
+          python scripts/evaluate_roles.py \
+            --memory memory/weekly/ \
+            --registry registry/capabilities.json \
+            --metrics "accuracy,speed,quality,innovation,collaboration" \
+            --output reports/weekly/performance.json \
+            --format json
+      
+      - name: Generate performance visualizations
+        run: |
+          python scripts/visualize_performance.py \
+            --input reports/weekly/performance.json \
+            --output reports/weekly/charts/
+      
+      # === NEW: Role health scoring ===
+      - name: Calculate role health scores
+        run: |
+          python scripts/calculate_health_scores.py \
+            --performance reports/weekly/performance.json \
+            --output reports/weekly/health.json
+      
+      # === NEW: Identify evolution candidates ===
+      - name: Identify evolution candidates
+        id: evolution
+        run: |
+          python scripts/identify_evolution_candidates.py \
+            --health reports/weekly/health.json \
+            --pollination memory/pollination/ \
+            --threshold 0.6 \
+            --output reports/weekly/candidates.json
+          
+          # Check if candidates exist
+          if [ -s reports/weekly/candidates.json ] && [ "$(cat reports/weekly/candidates.json)" != "[]" ]; then
+            echo "has_candidates=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_candidates=false" >> $GITHUB_OUTPUT
+          fi
+      
+      # === NEW: Propose capability mutations ===
+      - name: Propose capability mutations
+        if: steps.evolution.outputs.has_candidates == 'true'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python scripts/propose_mutations.py \
+            --candidates reports/weekly/candidates.json \
+            --capabilities registry/capabilities.json \
+            --model "gpt-4o" \
+            --output reports/weekly/mutations.json
+      
+      # === Update capabilities registry ===
+      - name: Update capabilities
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          python scripts/update_capabilities.py \
+            --performance reports/weekly/performance.json \
+            --mutations reports/weekly/mutations.json \
+            --registry registry/capabilities.json \
+            --backup registry/capabilities.backup.json
+      
+      # === NEW: Generate comprehensive evolution report ===
+      - name: Generate evolution report
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python scripts/generate_evolution_report.py \
+            --performance reports/weekly/performance.json \
+            --health reports/weekly/health.json \
+            --candidates reports/weekly/candidates.json \
+            --mutations reports/weekly/mutations.json \
+            --pollination memory/pollination/ \
+            --charts reports/weekly/charts/ \
+            --output reports/weekly/${{ steps.week.outputs.week }}.md \
+            --format markdown
+      
+      # === NEW: Generate executive summary ===
+      - name: Generate executive summary
+        run: |
+          python scripts/generate_summary.py \
+            --report reports/weekly/${{ steps.week.outputs.week }}.md \
+            --output reports/weekly/summary.md \
+            --max-length 500
+      
+      # === Create Evolution PR ===
+      - name: Create Evolution PR
+        if: github.event.inputs.dry_run != 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "evolution: weekly update ${{ steps.week.outputs.week }}"
+          title: "🦞 Weekly Evolution Report - ${{ steps.week.outputs.week }}"
+          body: |
+            ## 🧬 Weekly Evolution Report
+            
+            **Week**: ${{ steps.week.outputs.week }}
+            **Period**: ${{ steps.week.outputs.start }} to ${{ steps.week.outputs.end }}
+            
+            ### 📊 Key Metrics
+            
+            ```json
+            $(cat reports/weekly/summary.md 2>/dev/null || echo 'No summary available')
+            ```
+            
+            ### 🔄 Changes Included
+            
+            - [ ] Role performance evaluation
+            - [ ] Cross-node knowledge pollination
+            - [ ] Health score calculation
+            - [ ] Capability mutations (if any)
+            - [ ] Evolution report generation
+            
+            ### 📁 Files Changed
+            
+            - `registry/capabilities.json` - Updated capabilities
+            - `memory/pollination/` - Cross-pollinated knowledge
+            - `reports/weekly/` - Weekly reports and charts
+            
+            ---
+            
+            **Review**: This PR contains automated evolution updates.
+            Please review mutation proposals carefully before merging.
+            
+          branch: evolution/weekly-${{ steps.week.outputs.week }}
+          labels: evolution,weekly,auto-generated
+          reviewers: ${{ secrets.EVOLUTION_REVIEWERS }}
+      
+      # === Archive weekly data ===
+      - name: Archive weekly data
+        run: |
+          python scripts/archive_weekly.py \
+            --source reports/weekly/ \
+            --destination archive/weekly/${{ steps.week.outputs.week }}/
+      
+      # === Notifications ===
+      - name: Notify on completion
+        if: success()
+        run: |
+          python scripts/send_notification.py \
+            --type evolution-complete \
+            --week ${{ steps.week.outputs.week }} \
+            --summary reports/weekly/summary.md \
+            --webhook ${{ secrets.NOTIFICATION_WEBHOOK }}
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          python scripts/send_notification.py \
+            --type evolution-failed \
+            --week ${{ steps.week.outputs.week }} \
+            --webhook ${{ secrets.NOTIFICATION_WEBHOOK }}

@@ -1,0 +1,45 @@
+{
+  "taskId": "self-evolution-2026-0225",
+  "title": "6 小时自我进化任务",
+  "description": "系统性学习研究，为 ClawOS 提出优化建议",
+  "startTime": "2026-02-25T10:31:00Z",
+  "estimatedDuration": "6h",
+  "status": "in-progress",
+  "phases": [
+    {
+      "id": "phase1",
+      "name": "OpenClaw 生态深度研究",
+      "duration": "1.5h",
+      "status": "completed",
+      "completedAt": "2026-02-25T10:35:00Z",
+      "output": "phase1-openclaw-ecosystem.md",
+      "keyFindings": [
+        "OpenClaw 是超大规模项目（225K stars）",
+        "快速迭代周期（1-2 天）",
+        "用户关注：稳定性、安全性、跨平台",
+        "高价值 Skills：ClawSec、Team-Tasks、EvoClaw"
+      ]
+    },
+    {
+      "id": "phase2",
+      "name": "多 Agent 框架对比",
+      "duration": "1.5h",
+      "status": "pending",
+      "output": "phase2-multi-agent-frameworks.md"
+    },
+    {
+      "id": "phase3",
+      "name": "AI 前沿论文",
+      "duration": "1.5h",
+      "status": "pending",
+      "output": "phase3-ai-papers.md"
+    },
+    {
+      "id": "phase4",
+      "name": "ClawOS 优化建议",
+      "duration": "1.5h",
+      "status": "pending",
+      "output": "phase4-clawos-optimization.md"
+    }
+  ]
+}

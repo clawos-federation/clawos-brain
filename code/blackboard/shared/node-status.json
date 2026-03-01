@@ -1,0 +1,100 @@
+{
+  "federation": "ClawOS",
+  "lastUpdated": "2026-02-27T19:30:00+08:00",
+  
+  "nodes": {
+    "server": {
+      "id": "server",
+      "name": "Mac mini 主脑",
+      "device": "Mac mini 16G",
+      "role": "coordinator",
+      "tailscaleIp": "100.76.189.39",
+      "status": "online",
+      "lastHeartbeat": "2026-02-27T19:30:00+08:00",
+      "agents": {
+        "command": ["assistant", "gm", "validator", "platform-pm"],
+        "pm": ["coding-pm", "writing-pm", "research-pm"]
+      },
+      "features": ["imessage", "alpha-local", "heartbeat", "ssh-server"]
+    },
+    
+    "coding": {
+      "id": "coding",
+      "name": "MacBook 编程节点",
+      "device": "MacBook Air",
+      "hostname": "henrymacbook-air",
+      "role": "worker",
+      "tailscaleIp": "100.71.170.104",
+      "status": "online",
+      "specialization": "software-engineering",
+      "agents": {
+        "pm": ["coding-pm"],
+        "workers": ["analyst-code", "creator-code", "critic-code", "executor-test"]
+      },
+      "onlineHours": "on-demand"
+    },
+    
+    "writing": {
+      "id": "writing",
+      "name": "写作节点",
+      "device": "Mac mini 16G (shared)",
+      "role": "worker",
+      "status": "online",
+      "specialization": "academic-writing",
+      "agents": {
+        "workers": ["analyst-writing", "creator-writing", "critic-writing"]
+      },
+      "onlineHours": "workdays"
+    },
+    
+    "quant": {
+      "id": "quant",
+      "name": "Alpha 量化节点",
+      "device": "LEGION 2TB (外置硬盘)",
+      "physicalPath": "/Volumes/LEGION/clawos-alpha",
+      "symlink": "~/clawos-alpha",
+      "role": "worker",
+      "status": "online",
+      "specialization": "quantitative-finance",
+      "agents": {
+        "decision": ["alpha-commander", "alpha-strategist", "risk-controller"],
+        "execution": ["alpha-hunter", "alpha-backtester", "alpha-executor"]
+      },
+      "model": "Opus (TITAN) for decision, GLM-5 for execution",
+      "strategies": 28,
+      "storage": "2TB 外置",
+      "onlineHours": "market-hours",
+      "bridge": "alpha-bridge"
+    }
+  },
+  
+  "topology": {
+    "type": "federated",
+    "communication": "tailscale",
+    "sshEnabled": true,
+    "nodes": {
+      "server": {
+        "sshUser": "dongshenglu",
+        "sshPort": 22
+      },
+      "coding": {
+        "sshUser": "dongshenglu",
+        "sshPort": 22
+      }
+    }
+  },
+  
+  "sync": {
+    "mode": "rsync-over-ssh",
+    "r2Enabled": false,
+    "gitSyncEnabled": true,
+    "lastSync": null
+  },
+  
+  "health": {
+    "overallScore": 100,
+    "heartbeat": "active",
+    "alpha": "独立运行 (clawos-alpha)"
+    "issues": []
+  }
+}

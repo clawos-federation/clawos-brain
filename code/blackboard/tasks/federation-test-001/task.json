@@ -1,0 +1,41 @@
+{
+  "taskId": "federation-test-001",
+  "type": "test",
+  "priority": "P3",
+  "status": "pending",
+  "createdAt": "2026-02-26T21:35:00+08:00",
+  
+  "request": {
+    "source": "terminal",
+    "user": "dongshenglu",
+    "content": "测试 ClawOS 多节点联邦功能 - 生成一份简短的技术报告"
+  },
+  
+  "routing": {
+    "entryPoint": "terminal",
+    "assignedGM": "gm",
+    "assignedPM": "writing-pm",
+    "workers": ["analyst-research", "creator-writing", "critic-writing"]
+  },
+  
+  "context": {
+    "nodeId": "server",
+    "federation": "ClawOS",
+    "testPurpose": "验证多节点联邦任务分发和执行"
+  },
+  
+  "expectedFlow": [
+    "1. Terminal → GM 评估任务",
+    "2. GM → Writing-PM 任命",
+    "3. Writing-PM → 召唤 Workers",
+    "4. Workers 执行 → 汇报 PM",
+    "5. PM → GM 最终验收",
+    "6. GM → 用户通知"
+  ],
+  
+  "successCriteria": [
+    "任务在45分钟内完成",
+    "有进度更新",
+    "产出质量 ≥ 8 分"
+  ]
+}

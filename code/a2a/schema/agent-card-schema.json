@@ -1,0 +1,397 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clawos.local/schemas/agent-card/v1.0",
+  "title": "ClawOS A2A Agent Card",
+  "description": "Agent capability card for A2A protocol - describes agent capabilities for discovery and routing",
+  "type": "object",
+  "required": ["schemaVersion", "humanReadableId", "name", "description", "capabilities", "skills"],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "description": "Schema version for forward compatibility"
+    },
+    "humanReadableId": {
+      "type": "string",
+      "pattern": "^openclaw/[a-z-]+/[a-z-]+$",
+      "description": "Human-readable identifier following pattern: openclaw/{tier}/{name}",
+      "examples": ["openclaw/command/gm", "openclaw/pm/coding-pm", "openclaw/worker/coder"]
+    },
+    "agentVersion": {
+      "type": "string",
+      "description": "Version of this agent implementation",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Display name of the agent"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 500,
+      "description": "Detailed description of agent purpose and capabilities"
+    },
+    "provider": {
+      "$ref": "#/definitions/provider",
+      "description": "Organization providing this agent"
+    },
+    "capabilities": {
+      "$ref": "#/definitions/capabilities",
+      "description": "A2A protocol capabilities supported"
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/skill"
+      },
+      "minItems": 1,
+      "description": "List of skills this agent possesses"
+    },
+    "identity": {
+      "$ref": "#/definitions/identity",
+      "description": "ClawOS identity information"
+    },
+    "memory": {
+      "$ref": "#/definitions/memory",
+      "description": "Memory and context configuration"
+    },
+    "performance": {
+      "$ref": "#/definitions/performance",
+      "description": "Performance metrics and utility scoring"
+    },
+    "status": {
+      "$ref": "#/definitions/status",
+      "description": "Current operational status"
+    },
+    "pricing": {
+      "$ref": "#/definitions/pricing",
+      "description": "Pricing model if applicable"
+    },
+    "endpoints": {
+      "$ref": "#/definitions/endpoints",
+      "description": "Agent service endpoints"
+    },
+    "authentication": {
+      "$ref": "#/definitions/authentication",
+      "description": "Authentication requirements"
+    }
+  },
+  "definitions": {
+    "provider": {
+      "type": "object",
+      "properties": {
+        "organization": {
+          "type": "string",
+          "description": "Organization name"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Organization website"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "streaming": {
+          "type": "boolean",
+          "default": false,
+          "description": "Supports streaming responses"
+        },
+        "pushNotifications": {
+          "type": "boolean",
+          "default": false,
+          "description": "Supports push notifications"
+        },
+        "taskEvaluation": {
+          "type": "boolean",
+          "default": false,
+          "description": "Can evaluate and score tasks"
+        },
+        "pmAppointment": {
+          "type": "boolean",
+          "default": false,
+          "description": "Can appoint PMs for task delegation"
+        },
+        "finalValidation": {
+          "type": "boolean",
+          "default": false,
+          "description": "Can perform final task validation"
+        },
+        "toolUse": {
+          "type": "boolean",
+          "default": true,
+          "description": "Can use external tools"
+        },
+        "multiModal": {
+          "type": "boolean",
+          "default": false,
+          "description": "Supports multimodal input/output"
+        }
+      }
+    },
+    "skill": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique skill identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable skill name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed skill description"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags for skill categorization"
+        },
+        "proficiency": {
+          "type": "string",
+          "enum": ["beginner", "intermediate", "advanced", "expert"],
+          "default": "intermediate",
+          "description": "Skill proficiency level"
+        },
+        "inputSchema": {
+          "type": "object",
+          "description": "JSON Schema for skill input"
+        },
+        "outputSchema": {
+          "type": "object",
+          "description": "JSON Schema for skill output"
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "required": ["node", "tier"],
+      "properties": {
+        "did": {
+          "type": "string",
+          "description": "Decentralized identifier",
+          "pattern": "^did:clawos:[a-z0-9]+$"
+        },
+        "node": {
+          "type": "string",
+          "description": "Node name in ClawOS hierarchy"
+        },
+        "tier": {
+          "type": "string",
+          "enum": ["command", "pm", "worker"],
+          "description": "Tier level in agent hierarchy"
+        },
+        "parent": {
+          "type": "string",
+          "description": "Parent agent ID if applicable"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Child agent IDs if applicable"
+        }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "properties": {
+        "persistent": {
+          "type": "boolean",
+          "default": false,
+          "description": "Has persistent memory across sessions"
+        },
+        "blackboardIntegration": {
+          "type": "boolean",
+          "default": false,
+          "description": "Integrates with ClawOS Blackboard"
+        },
+        "maxContextTokens": {
+          "type": "integer",
+          "minimum": 1000,
+          "description": "Maximum context window in tokens"
+        },
+        "memoryTypes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["short-term", "long-term", "episodic", "semantic"]
+          },
+          "description": "Supported memory types"
+        }
+      }
+    },
+    "performance": {
+      "type": "object",
+      "properties": {
+        "utilityScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.5,
+          "description": "Current utility score (0-1)"
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "tasksCompleted": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tasksFailed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "avgResponseTimeMs": {
+              "type": "number",
+              "minimum": 0
+            },
+            "successRate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "score": {
+                "type": "number"
+              },
+              "event": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Performance history entries"
+        },
+        "nominationEligible": {
+          "type": "boolean",
+          "default": false,
+          "description": "Eligible for PM nomination"
+        }
+      }
+    },
+    "status": {
+      "type": "object",
+      "required": ["state"],
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["active", "idle", "busy", "offline", "maintenance"],
+          "description": "Current operational state"
+        },
+        "healthEndpoint": {
+          "type": "string",
+          "format": "uri",
+          "description": "Health check endpoint URL"
+        },
+        "lastHeartbeat": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last heartbeat timestamp"
+        },
+        "currentTask": {
+          "type": "string",
+          "description": "Current task ID if busy"
+        },
+        "loadPercentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Current load percentage"
+        }
+      }
+    },
+    "pricing": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string",
+          "enum": ["free", "per-task", "subscription", "usage-based"],
+          "default": "free",
+          "description": "Pricing model"
+        },
+        "costPerTask": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Cost per task in USD"
+        },
+        "note": {
+          "type": "string",
+          "description": "Additional pricing notes"
+        }
+      }
+    },
+    "endpoints": {
+      "type": "object",
+      "properties": {
+        "a2a": {
+          "type": "string",
+          "format": "uri",
+          "description": "A2A protocol endpoint"
+        },
+        "rpc": {
+          "type": "string",
+          "format": "uri",
+          "description": "JSON-RPC endpoint"
+        },
+        "websocket": {
+          "type": "string",
+          "format": "uri",
+          "description": "WebSocket endpoint for streaming"
+        },
+        "card": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to fetch this agent card"
+        }
+      }
+    },
+    "authentication": {
+      "type": "object",
+      "properties": {
+        "schemes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["none", "api-key", "oauth2", "jwt", "mutual-tls"]
+          },
+          "description": "Supported authentication schemes"
+        },
+        "apiKeyRequirements": {
+          "type": "object",
+          "properties": {
+            "headerName": {
+              "type": "string"
+            },
+            "scopes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

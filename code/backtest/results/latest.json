@@ -1,0 +1,587 @@
+{
+  "timestamp": "2026-02-25T11:10:15.941507",
+  "mode": "mock_data",
+  "summary": {
+    "strategies_tested": 5,
+    "best_strategy": "ma_cross_f5s20",
+    "best_pass_rate": 50.0,
+    "best_avg_return": 18.71
+  },
+  "results": [
+    {
+      "strategy": "ma_cross_f5s20",
+      "params": {
+        "fast": 5,
+        "slow": 20
+      },
+      "tested": 10,
+      "passed": 5,
+      "pass_rate": 50.0,
+      "avg_return": 18.71,
+      "avg_drawdown": 16.99,
+      "avg_sharpe": 0.83,
+      "results": [
+        {
+          "code": "000988",
+          "name": "华工科技",
+          "total_return": 26.6,
+          "annual_return": 41.82,
+          "max_drawdown": 8.76,
+          "sharpe": 1.42,
+          "trades": 23,
+          "passed": true
+        },
+        {
+          "code": "002506",
+          "name": "协鑫集成",
+          "total_return": 15.65,
+          "annual_return": 24.6,
+          "max_drawdown": 6.49,
+          "sharpe": 1.72,
+          "trades": 14,
+          "passed": true
+        },
+        {
+          "code": "603466",
+          "name": "风语筑",
+          "total_return": -30.71,
+          "annual_return": -48.29,
+          "max_drawdown": 31.53,
+          "sharpe": -1.35,
+          "trades": 18,
+          "passed": false
+        },
+        {
+          "code": "002498",
+          "name": "汉缆股份",
+          "total_return": 5.11,
+          "annual_return": 8.03,
+          "max_drawdown": 15.21,
+          "sharpe": 0.49,
+          "trades": 11,
+          "passed": false
+        },
+        {
+          "code": "601390",
+          "name": "中国中铁",
+          "total_return": 7.39,
+          "annual_return": 11.62,
+          "max_drawdown": 35.24,
+          "sharpe": 0.42,
+          "trades": 15,
+          "passed": false
+        },
+        {
+          "code": "600550",
+          "name": "保变电气",
+          "total_return": 28.64,
+          "annual_return": 45.04,
+          "max_drawdown": 11.39,
+          "sharpe": 1.9,
+          "trades": 20,
+          "passed": true
+        },
+        {
+          "code": "002716",
+          "name": "湖南白银",
+          "total_return": 75.62,
+          "annual_return": 118.89,
+          "max_drawdown": 7.91,
+          "sharpe": 3.97,
+          "trades": 12,
+          "passed": true
+        },
+        {
+          "code": "000636",
+          "name": "风华高科",
+          "total_return": -9.96,
+          "annual_return": -15.67,
+          "max_drawdown": 17.21,
+          "sharpe": -0.89,
+          "trades": 16,
+          "passed": false
+        },
+        {
+          "code": "600096",
+          "name": "云天化",
+          "total_return": 18.26,
+          "annual_return": 28.71,
+          "max_drawdown": 8.43,
+          "sharpe": 1.54,
+          "trades": 20,
+          "passed": true
+        },
+        {
+          "code": "002131",
+          "name": "利欧股份",
+          "total_return": -17.61,
+          "annual_return": -27.68,
+          "max_drawdown": 27.75,
+          "sharpe": -0.91,
+          "trades": 20,
+          "passed": false
+        }
+      ]
+    },
+    {
+      "strategy": "ma_cross_f7s25",
+      "params": {
+        "fast": 7,
+        "slow": 25
+      },
+      "tested": 10,
+      "passed": 1,
+      "pass_rate": 10.0,
+      "avg_return": -11.12,
+      "avg_drawdown": 22.59,
+      "avg_sharpe": -0.27,
+      "results": [
+        {
+          "code": "000988",
+          "name": "华工科技",
+          "total_return": -10.22,
+          "annual_return": -16.6,
+          "max_drawdown": 28.36,
+          "sharpe": -0.37,
+          "trades": 18,
+          "passed": false
+        },
+        {
+          "code": "002506",
+          "name": "协鑫集成",
+          "total_return": -23.4,
+          "annual_return": -37.99,
+          "max_drawdown": 26.5,
+          "sharpe": -1.11,
+          "trades": 17,
+          "passed": false
+        },
+        {
+          "code": "603466",
+          "name": "风语筑",
+          "total_return": 3.08,
+          "annual_return": 5.0,
+          "max_drawdown": 23.21,
+          "sharpe": 0.33,
+          "trades": 10,
+          "passed": false
+        },
+        {
+          "code": "002498",
+          "name": "汉缆股份",
+          "total_return": -20.42,
+          "annual_return": -33.15,
+          "max_drawdown": 29.04,
+          "sharpe": -1.32,
+          "trades": 16,
+          "passed": false
+        },
+        {
+          "code": "601390",
+          "name": "中国中铁",
+          "total_return": -1.44,
+          "annual_return": -2.33,
+          "max_drawdown": 11.05,
+          "sharpe": -0.21,
+          "trades": 13,
+          "passed": false
+        },
+        {
+          "code": "600550",
+          "name": "保变电气",
+          "total_return": -12.56,
+          "annual_return": -20.39,
+          "max_drawdown": 18.38,
+          "sharpe": -0.79,
+          "trades": 14,
+          "passed": false
+        },
+        {
+          "code": "002716",
+          "name": "湖南白银",
+          "total_return": 31.76,
+          "annual_return": 51.55,
+          "max_drawdown": 11.48,
+          "sharpe": 2.77,
+          "trades": 12,
+          "passed": true
+        },
+        {
+          "code": "000636",
+          "name": "风华高科",
+          "total_return": -14.13,
+          "annual_return": -22.93,
+          "max_drawdown": 21.94,
+          "sharpe": -1.2,
+          "trades": 15,
+          "passed": false
+        },
+        {
+          "code": "600096",
+          "name": "云天化",
+          "total_return": -24.79,
+          "annual_return": -40.24,
+          "max_drawdown": 40.02,
+          "sharpe": -1.13,
+          "trades": 13,
+          "passed": false
+        },
+        {
+          "code": "002131",
+          "name": "利欧股份",
+          "total_return": 3.65,
+          "annual_return": 5.92,
+          "max_drawdown": 15.95,
+          "sharpe": 0.3,
+          "trades": 11,
+          "passed": false
+        }
+      ]
+    },
+    {
+      "strategy": "ma_cross_f10s30",
+      "params": {
+        "fast": 10,
+        "slow": 30
+      },
+      "tested": 10,
+      "passed": 4,
+      "pass_rate": 40.0,
+      "avg_return": 11.25,
+      "avg_drawdown": 16.14,
+      "avg_sharpe": 0.26,
+      "results": [
+        {
+          "code": "000988",
+          "name": "华工科技",
+          "total_return": 2.46,
+          "annual_return": 4.13,
+          "max_drawdown": 18.66,
+          "sharpe": 0.29,
+          "trades": 16,
+          "passed": false
+        },
+        {
+          "code": "002506",
+          "name": "协鑫集成",
+          "total_return": -8.93,
+          "annual_return": -14.98,
+          "max_drawdown": 16.83,
+          "sharpe": -0.79,
+          "trades": 8,
+          "passed": false
+        },
+        {
+          "code": "603466",
+          "name": "风语筑",
+          "total_return": 22.41,
+          "annual_return": 37.59,
+          "max_drawdown": 14.01,
+          "sharpe": 1.48,
+          "trades": 12,
+          "passed": true
+        },
+        {
+          "code": "002498",
+          "name": "汉缆股份",
+          "total_return": 19.98,
+          "annual_return": 33.52,
+          "max_drawdown": 7.55,
+          "sharpe": 1.6,
+          "trades": 12,
+          "passed": true
+        },
+        {
+          "code": "601390",
+          "name": "中国中铁",
+          "total_return": -4.22,
+          "annual_return": -7.08,
+          "max_drawdown": 17.78,
+          "sharpe": -0.02,
+          "trades": 11,
+          "passed": false
+        },
+        {
+          "code": "600550",
+          "name": "保变电气",
+          "total_return": -8.26,
+          "annual_return": -13.86,
+          "max_drawdown": 18.31,
+          "sharpe": -0.66,
+          "trades": 8,
+          "passed": false
+        },
+        {
+          "code": "002716",
+          "name": "湖南白银",
+          "total_return": 43.28,
+          "annual_return": 72.62,
+          "max_drawdown": 15.63,
+          "sharpe": 1.73,
+          "trades": 18,
+          "passed": true
+        },
+        {
+          "code": "000636",
+          "name": "风华高科",
+          "total_return": -27.09,
+          "annual_return": -45.45,
+          "max_drawdown": 28.99,
+          "sharpe": -2.33,
+          "trades": 14,
+          "passed": false
+        },
+        {
+          "code": "600096",
+          "name": "云天化",
+          "total_return": -11.99,
+          "annual_return": -20.12,
+          "max_drawdown": 16.59,
+          "sharpe": -0.85,
+          "trades": 9,
+          "passed": false
+        },
+        {
+          "code": "002131",
+          "name": "利欧股份",
+          "total_return": 39.4,
+          "annual_return": 66.1,
+          "max_drawdown": 7.08,
+          "sharpe": 2.15,
+          "trades": 13,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "strategy": "ma_cross_f5s15",
+      "params": {
+        "fast": 5,
+        "slow": 15
+      },
+      "tested": 10,
+      "passed": 2,
+      "pass_rate": 20.0,
+      "avg_return": -11.79,
+      "avg_drawdown": 25.37,
+      "avg_sharpe": -0.49,
+      "results": [
+        {
+          "code": "000988",
+          "name": "华工科技",
+          "total_return": -35.87,
+          "annual_return": -54.68,
+          "max_drawdown": 40.88,
+          "sharpe": -1.91,
+          "trades": 24,
+          "passed": false
+        },
+        {
+          "code": "002506",
+          "name": "协鑫集成",
+          "total_return": 4.42,
+          "annual_return": 6.74,
+          "max_drawdown": 19.16,
+          "sharpe": 0.53,
+          "trades": 25,
+          "passed": false
+        },
+        {
+          "code": "603466",
+          "name": "风语筑",
+          "total_return": -12.36,
+          "annual_return": -18.84,
+          "max_drawdown": 24.77,
+          "sharpe": -0.74,
+          "trades": 25,
+          "passed": false
+        },
+        {
+          "code": "002498",
+          "name": "汉缆股份",
+          "total_return": -27.58,
+          "annual_return": -42.04,
+          "max_drawdown": 32.57,
+          "sharpe": -1.85,
+          "trades": 20,
+          "passed": false
+        },
+        {
+          "code": "601390",
+          "name": "中国中铁",
+          "total_return": 23.39,
+          "annual_return": 35.66,
+          "max_drawdown": 13.53,
+          "sharpe": 1.19,
+          "trades": 26,
+          "passed": true
+        },
+        {
+          "code": "600550",
+          "name": "保变电气",
+          "total_return": -24.63,
+          "annual_return": -37.54,
+          "max_drawdown": 26.92,
+          "sharpe": -2.15,
+          "trades": 22,
+          "passed": false
+        },
+        {
+          "code": "002716",
+          "name": "湖南白银",
+          "total_return": -14.2,
+          "annual_return": -21.65,
+          "max_drawdown": 41.25,
+          "sharpe": -0.59,
+          "trades": 31,
+          "passed": false
+        },
+        {
+          "code": "000636",
+          "name": "风华高科",
+          "total_return": 25.18,
+          "annual_return": 38.39,
+          "max_drawdown": 11.07,
+          "sharpe": 1.42,
+          "trades": 25,
+          "passed": true
+        },
+        {
+          "code": "600096",
+          "name": "云天化",
+          "total_return": -7.82,
+          "annual_return": -11.92,
+          "max_drawdown": 20.4,
+          "sharpe": -0.3,
+          "trades": 20,
+          "passed": false
+        },
+        {
+          "code": "002131",
+          "name": "利欧股份",
+          "total_return": -7.87,
+          "annual_return": -12.0,
+          "max_drawdown": 23.16,
+          "sharpe": -0.46,
+          "trades": 19,
+          "passed": false
+        }
+      ]
+    },
+    {
+      "strategy": "ma_cross_f8s20",
+      "params": {
+        "fast": 8,
+        "slow": 20
+      },
+      "tested": 10,
+      "passed": 3,
+      "pass_rate": 30.0,
+      "avg_return": -1.16,
+      "avg_drawdown": 22.11,
+      "avg_sharpe": -0.22,
+      "results": [
+        {
+          "code": "000988",
+          "name": "华工科技",
+          "total_return": -27.92,
+          "annual_return": -43.9,
+          "max_drawdown": 28.27,
+          "sharpe": -1.87,
+          "trades": 11,
+          "passed": false
+        },
+        {
+          "code": "002506",
+          "name": "协鑫集成",
+          "total_return": 19.02,
+          "annual_return": 29.91,
+          "max_drawdown": 7.22,
+          "sharpe": 1.77,
+          "trades": 17,
+          "passed": true
+        },
+        {
+          "code": "603466",
+          "name": "风语筑",
+          "total_return": -6.61,
+          "annual_return": -10.39,
+          "max_drawdown": 34.41,
+          "sharpe": -0.18,
+          "trades": 12,
+          "passed": false
+        },
+        {
+          "code": "002498",
+          "name": "汉缆股份",
+          "total_return": 20.0,
+          "annual_return": 31.45,
+          "max_drawdown": 10.05,
+          "sharpe": 1.71,
+          "trades": 14,
+          "passed": true
+        },
+        {
+          "code": "601390",
+          "name": "中国中铁",
+          "total_return": -6.08,
+          "annual_return": -9.55,
+          "max_drawdown": 22.05,
+          "sharpe": -0.21,
+          "trades": 14,
+          "passed": false
+        },
+        {
+          "code": "600550",
+          "name": "保变电气",
+          "total_return": -19.39,
+          "annual_return": -30.48,
+          "max_drawdown": 22.4,
+          "sharpe": -2.6,
+          "trades": 16,
+          "passed": false
+        },
+        {
+          "code": "002716",
+          "name": "湖南白银",
+          "total_return": 39.15,
+          "annual_return": 61.56,
+          "max_drawdown": 25.84,
+          "sharpe": 1.54,
+          "trades": 17,
+          "passed": false
+        },
+        {
+          "code": "000636",
+          "name": "风华高科",
+          "total_return": -30.44,
+          "annual_return": -47.86,
+          "max_drawdown": 30.8,
+          "sharpe": -2.74,
+          "trades": 14,
+          "passed": false
+        },
+        {
+          "code": "600096",
+          "name": "云天化",
+          "total_return": -9.79,
+          "annual_return": -15.4,
+          "max_drawdown": 25.73,
+          "sharpe": -0.53,
+          "trades": 13,
+          "passed": false
+        },
+        {
+          "code": "002131",
+          "name": "利欧股份",
+          "total_return": 14.65,
+          "annual_return": 23.03,
+          "max_drawdown": 14.31,
+          "sharpe": 0.92,
+          "trades": 14,
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

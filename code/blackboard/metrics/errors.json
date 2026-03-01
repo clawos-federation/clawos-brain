@@ -1,0 +1,26 @@
+{
+  "daily": {
+    "date": "2026-02-24",
+    "E001": 0,
+    "E002": 0,
+    "E003": 0,
+    "E004": 0
+  },
+  "byAgent": {
+    "assistant": { "total": 0, "byType": {} },
+    "gm": { "total": 0, "byType": {} },
+    "writing-pm": { "total": 0, "byType": {} },
+    "coding-pm": { "total": 0, "byType": {} },
+    "platform-pm": { "total": 0, "byType": {} },
+    "writer-general": { "total": 0, "byType": {} },
+    "researcher-web": { "total": 0, "byType": {} },
+    "reviewer-content": { "total": 0, "byType": {} },
+    "coder-frontend": { "total": 0, "byType": {} },
+    "coder-backend": { "total": 0, "byType": {} },
+    "tester-auto": { "total": 0, "byType": {} },
+    "github-ops": { "total": 0, "byType": {} },
+    "validator": { "total": 0, "byType": {} }
+  },
+  "trends": [],
+  "lastUpdated": "2026-02-24T00:00:00.000Z"
+}

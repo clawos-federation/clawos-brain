@@ -1,0 +1,284 @@
+# ClawOS 完整书籍创作工作流
+# 基于 Lobster 工作流引擎
+# 支持: parallel, loop, approval, compensation
+
+name: write-book
+description: 完整书籍创作流水线，确定性编排
+
+# 输入参数
+input:
+  title: string           # 书籍标题
+  chapters: integer       # 章节数量
+  wordTarget: integer     # 目标字数
+  taskId: string          # 任务ID
+  userId: string          # 用户ID
+
+# 全局变量
+vars:
+  blackboardBase: "~/clawos/blackboard/tasks"
+  outputBase: "~/clawos/output"
+
+# 工作流步骤
+steps:
+  # ============================================
+  # Phase 1: 规划阶段
+  # ============================================
+
+  - name: plan
+    agent: writing-pm
+    prompt: |
+      为《{input.title}》制定 {input.chapters} 章详细大纲。
+
+      要求:
+      1. 每章包含：标题、核心论点、关键知识点（3-5个）、字数目标
+      2. 确保整体结构连贯
+      3. 总字数控制在 {input.wordTarget} 字左右
+
+      输出格式: JSON
+      输出路径: {vars.blackboardBase}/{input.taskId}/outline.json
+    output: "{vars.blackboardBase}/{input.taskId}/outline.json"
+    checkpoint: true
+
+  # 非阻塞通知用户
+  - name: notify-planning-done
+    agent: "assistant-{input.userId}"
+    prompt: |
+      ✅ 大纲已完成，即将开始写作。
+
+      📚 书籍: 《{input.title}》
+      📐 规模: {input.chapters} 章
+      📝 预计: {input.wordTarget} 字
+      ⏱ 预计完成: 约 90 分钟
+
+      我会每 20 分钟给你进度更新。
+    async: true
+
+  # ============================================
+  # Phase 2: 并行写作阶段
+  # ============================================
+
+  - name: write-chapters
+    parallel:
+      maxConcurrent: 2    # 最多2章同时写作，避免资源竞争
+      items: "{range(1, input.chapters + 1)}"
+    sub-workflow: write-single-chapter
+    input:
+      chapterIndex: "{item}"
+      outline: "{vars.blackboardBase}/{input.taskId}/outline.json"
+      taskId: "{input.taskId}"
+      title: "{input.title}"
+
+  # ============================================
+  # Phase 3: 独立验证阶段
+  # ============================================
+
+  - name: validate-all
+    agent: validator
+    prompt: |
+      验证 ~/clawos/blackboard/tasks/{input.taskId}/chapters/ 下所有章节。
+
+      逐章评分，维度:
+      - 准确性 (25%)
+      - 完整性 (25%)
+      - 质量 (25%)
+      - 规范 (25%)
+
+      评分标准: ≥8.0 通过，<8.0 打回
+
+      输出格式: JSON
+      输出路径: {vars.blackboardBase}/{input.taskId}/validation.md
+    output: "{vars.blackboardBase}/{input.taskId}/validation.md"
+    outputMapping:
+      validation_score: "$.score"
+      failed_chapters: "$.failedChapters"
+      chapter_scores: "$.chapterScores"
+    checkpoint: true
+
+  # ============================================
+  # Phase 4: 条件循环 - 打回重做
+  # ============================================
+
+  - name: revision-loop
+    loop:
+      condition: "validation.score < 8 && iteration < 3"
+      max: 3
+    steps:
+      - name: identify-failed-chapters
+        agent: writing-pm
+        prompt: |
+          读取验证结果: {vars.blackboardBase}/{input.taskId}/validation.md
+          识别评分 < 8.0 的章节。
+          生成修改计划。
+        output: "{vars.blackboardBase}/{input.taskId}/revision-plan.md"
+
+      - name: revise-chapters
+        parallel:
+          maxConcurrent: 2
+          items: "{failed_chapters}"
+        agent: writer-general
+        prompt: |
+          根据验证意见修改第 {item} 章。
+
+          验证结果: {vars.blackboardBase}/{input.taskId}/validation.md
+          原文: {vars.blackboardBase}/{input.taskId}/chapters/ch-{item:02d}.md
+
+          修改要求:
+          1. 针对性解决验证中指出的问题
+          2. 保持与其他章节的一致性
+          3. 不改变核心内容
+
+      - name: revalidate
+        agent: validator
+        prompt: |
+          重新验证修改后的章节。
+
+          检查是否解决了之前的问题。
+          更新验证结果。
+
+        output: "{vars.blackboardBase}/{input.taskId}/validation.md"
+
+  # ============================================
+  # Phase 5: 最终排版合并
+  # ============================================
+
+  - name: format-and-compile
+    agent: writer-general
+    prompt: |
+      合并所有章节，统一排版，生成最终 Markdown。
+
+      要求:
+      1. 统一标题格式
+      2. 生成目录
+      3. 添加封面信息
+      4. 检查交叉引用
+
+      输出路径: {vars.outputBase}/{input.taskId}/book.md
+    output: "{vars.outputBase}/{input.taskId}/book.md"
+    outputMapping:
+      word_count: "$.wordCount"
+      final_score: "$.finalScore"
+      chapters_completed: "$.chaptersCompleted"
+    checkpoint: true
+
+  # ============================================
+  # Phase 6: 审批门控 + 发布
+  # ============================================
+
+  - name: publish-approval
+    approval:
+      required: true
+      timeout: "24h"
+      message: |
+        《{input.title}》已完成，请确认发布。
+
+        统计:
+        - 总字数: {word_count}
+        - 平均评分: {final_score}/10
+        - 章节数: {input.chapters}
+
+        确认后将提交到 GitHub。
+    onReject:
+      action: "notify-user"
+      message: "发布已取消，书籍保存在 {vars.outputBase}/{input.taskId}/"
+
+  - name: publish
+    exec: |
+      #!/bin/bash
+      set -e
+      cd ~/clawos/output
+      git add {input.taskId}/
+      git commit -m "feat: 《{input.title}》 · taskId={input.taskId}
+
+      - 章节数: {input.chapters}
+      - 总字数: {word_count}
+      - 验证评分: {final_score}/10
+
+      Generated by ClawOS Workflow Engine"
+      git push origin main
+    outputMapping:
+      github_url: "$.githubUrl"
+      commit_sha: "$.commitSha"
+    checkpoint: true
+
+  # ============================================
+  # Phase 7: 完成通知
+  # ============================================
+
+  - name: final-notify
+    agent: "assistant-{input.userId}"
+    prompt: |
+      🎉 《{input.title}》已完成！
+
+      📊 统计:
+      - 总字数: {word_count}
+      - 平均评分: {final_score}/10
+      - 章节数: {input.chapters}
+
+      🔗 GitHub: {github_url}
+
+      如需修改，告诉我哪里不满意？
+    async: true
+
+# ============================================
+# 补偿操作 (Saga Pattern)
+# ============================================
+compensations:
+  write-chapters:
+    action: "删除未完成的章节文件，清空 {vars.blackboardBase}/{input.taskId}/chapters/"
+    exec: "rm -rf {vars.blackboardBase}/{input.taskId}/chapters/*"
+
+  publish:
+    action: "Git revert 最近一次 commit"
+    exec: |
+      cd ~/clawos/output
+      git revert HEAD --no-edit
+      git push origin main
+
+# ============================================
+# 错误处理
+# ============================================
+onError:
+  escalate:
+    agent: gm
+    message: "任务 {input.taskId} 在步骤 {failed_step} 失败，需要介入"
+    writeToBlackboard: "{vars.blackboardBase}/{input.taskId}/escalation.md"
+
+  retry:
+    maxAttempts: 2
+    backoff: "exponential"
+    initialDelay: "30s"
+
+# ============================================
+# 子工作流定义
+# ============================================
+subWorkflows:
+  write-single-chapter:
+    name: write-single-chapter
+    input:
+      chapterIndex: integer
+      outline: string
+      taskId: string
+      title: string
+
+    steps:
+      - name: write
+        agent: writer-general
+        prompt: |
+          撰写《{input.title}》第 {input.chapterIndex} 章。
+
+          大纲参考: {input.outline}
+
+          要求:
+          1. 严格遵循大纲
+          2. 字数符合目标
+          3. 风格统一
+
+          输出路径: ~/clawos/blackboard/tasks/{input.taskId}/chapters/ch-{input.chapterIndex:02d}.md
+        output: "~/clawos/blackboard/tasks/{input.taskId}/chapters/ch-{input.chapterIndex:02d}.md"
+        checkpoint: true
+
+      - name: notify-chapter-done
+        agent: "assistant-{input.userId}"
+        prompt: |
+          ✅ 第 {input.chapterIndex} 章已完成
+        async: true

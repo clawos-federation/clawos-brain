@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-02-24T00:00:00Z",
+  "teams": {
+    "frontend": {
+      "lead": "coder-frontend",
+      "members": ["coder-frontend"],
+      "status": "available"
+    },
+    "backend": {
+      "lead": "coder-backend",
+      "members": ["coder-backend"],
+      "status": "available"
+    },
+    "qa": {
+      "lead": "tester-auto",
+      "members": ["tester-auto"],
+      "status": "available"
+    },
+    "git": {
+      "lead": "github-ops",
+      "members": ["github-ops"],
+      "status": "available"
+    }
+  },
+  "activeAssignments": []
+}

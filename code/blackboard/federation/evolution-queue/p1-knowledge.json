@@ -1,0 +1,22 @@
+{
+  "priority": "P1",
+  "lastUpdated": "2026-02-27T12:20:00+08:00",
+  "tasks": [
+    {
+      "id": "p1-2026-0227-001",
+      "type": "knowledge-update",
+      "status": "pending",
+      "created": "2026-02-27T08:00:00+08:00",
+      "payload": {
+        "source": "daily-harvest",
+        "target": "skills/",
+        "action": "update-skill-definitions"
+      },
+      "assignedTo": null,
+      "attempts": 0,
+      "maxAttempts": 3
+    }
+  ],
+  "processing": [],
+  "completed": []
+}

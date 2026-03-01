@@ -1,0 +1,221 @@
+# ClawOS 软件开发工作流
+# 基于 Lobster 工作流引擎
+# 完整开发流水线：设计 → 开发 → 测试 → 部署
+
+name: coding-task
+description: 软件开发流水线，支持前后端并行开发
+
+# 输入参数
+input:
+  taskId: string          # 任务ID
+  projectType: string     # 项目类型: frontend|backend|fullstack
+  requirements: string    # 需求描述
+  techStack: string       # 技术栈
+  userId: string          # 用户ID
+
+# 全局变量
+vars:
+  blackboardBase: "~/clawos/blackboard/tasks"
+  codeBase: "~/clawos/projects"
+
+# 工作流步骤
+steps:
+  # ============================================
+  # Phase 1: 技术设计
+  # ============================================
+  - name: design
+    agent: coding-pm
+    prompt: |
+      为以下需求制定技术设计方案。
+
+      任务ID: {input.taskId}
+      项目类型: {input.projectType}
+      需求描述: {input.requirements}
+      技术栈: {input.techStack}
+
+      输出:
+      1. 架构设计
+      2. API 设计（如适用）
+      3. 数据模型（如适用）
+      4. 文件结构
+      5. 测试策略
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/design.md
+    output: "{vars.blackboardBase}/{input.taskId}/design.md"
+    outputMapping:
+      project_components: "$.components"
+      component_types: "$.componentTypes"
+      architecture: "$.architecture"
+    checkpoint: true
+
+  # ============================================
+  # Phase 2: 并行开发
+  # ============================================
+  - name: develop
+    parallel:
+      maxConcurrent: 2
+      items: "{project_components}"
+    sub-workflow: develop-component
+    input:
+      componentIndex: "{item.index}"
+      design: "{vars.blackboardBase}/{input.taskId}/design.md"
+      taskId: "{input.taskId}"
+      codeBase: "{vars.codeBase}"
+      component_type: "{item.type}"
+
+  # ============================================
+  # Phase 3: 测试
+  # ============================================
+  - name: test
+    agent: tester-auto
+    prompt: |
+      为项目编写并执行测试。
+
+      任务ID: {input.taskId}
+      设计文档: {vars.blackboardBase}/{input.taskId}/design.md
+      代码目录: {vars.codeBase}/{input.taskId}
+
+      测试要求:
+      1. 单元测试覆盖率 >= 80%
+      2. 集成测试覆盖关键路径
+      3. 所有测试必须通过
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/test-report.md
+    output: "{vars.blackboardBase}/{input.taskId}/test-report.md"
+    outputMapping:
+      coverage: "$.coverage"
+      passed: "$.passed"
+      failed: "$.failed"
+    checkpoint: true
+
+  # ============================================
+  # Phase 4: 代码审查
+  # ============================================
+  - name: review
+    agent: validator
+    prompt: |
+      审查代码质量。
+
+      任务ID: {input.taskId}
+      代码目录: {vars.codeBase}/{input.taskId}
+      测试报告: {vars.blackboardBase}/{input.taskId}/test-report.md
+
+      审查维度:
+      - 代码规范 (25%)
+      - 测试覆盖 (25%)
+      - 安全性 (25%)
+      - 性能 (25%)
+
+      评分标准: ≥8.0 通过
+
+      输出路径: {vars.blackboardBase}/{input.taskId}/review.md
+    output: "{vars.blackboardBase}/{input.taskId}/review.md"
+    outputMapping:
+      review_score: "$.score"
+      code_quality: "$.codeQuality"
+      security_issues: "$.securityIssues"
+    checkpoint: true
+
+  # ============================================
+  # Phase 5: 条件循环 - 修复问题
+  # ============================================
+  - name: fix-loop
+    loop:
+      condition: "review.score < 8 && iteration < 3"
+      max: 3
+    steps:
+      - name: fix-issues
+        agent: coding-pm
+        prompt: |
+          根据审查结果修复问题。
+
+          审查报告: {vars.blackboardBase}/{input.taskId}/review.md
+
+          输出修复说明。
+        output: "{vars.blackboardBase}/{input.taskId}/fix-{iteration}.md"
+
+      - name: re-review
+        agent: validator
+        prompt: |
+          重新审查修复后的代码。
+        output: "{vars.blackboardBase}/{input.taskId}/review.md"
+
+  # ============================================
+  # Phase 6: 提交代码
+  # ============================================
+  - name: commit
+    agent: github-ops
+    prompt: |
+      提交代码到 Git 仓库。
+
+      任务ID: {input.taskId}
+      代码目录: {vars.codeBase}/{input.taskId}
+
+      提交信息:
+      ```
+      feat: {input.requirements}
+
+      - 任务ID: {input.taskId}
+      - 测试覆盖率: {coverage}%
+      - 审查评分: {review_score}/10
+      ```
+    checkpoint: true
+
+  # ============================================
+  # Phase 7: 完成通知
+  # ============================================
+  - name: notify
+    agent: assistant
+    prompt: |
+      ✅ 开发任务已完成
+
+      任务ID: {input.taskId}
+      需求: {input.requirements}
+      测试覆盖率: {coverage}%
+      审查评分: {review_score}/10
+
+      代码已提交到 Git。
+    async: true
+
+# ============================================
+# 补偿操作
+# ============================================
+compensations:
+  commit:
+    action: "Git revert"
+    exec: |
+      cd {vars.codeBase}/{input.taskId}
+      git revert HEAD --no-edit
+
+# ============================================
+# 错误处理
+# ============================================
+onError:
+  escalate:
+    agent: gm
+    message: "开发任务 {input.taskId} 在步骤 {failed_step} 失败"
+    writeToBlackboard: "{vars.blackboardBase}/{input.taskId}/escalation.md"
+
+# ============================================
+# 子工作流
+# ============================================
+subWorkflows:
+  develop-component:
+    name: develop-component
+    input:
+      componentIndex: integer
+      design: string
+      taskId: string
+      codeBase: string
+      component_type: string
+
+    steps:
+      - name: code
+        agent: "coder-{component_type}"
+        prompt: |
+          开发组件 {input.componentIndex}。
+
+          设计文档: {input.design}
+          输出目录: {input.codeBase}/{input.taskId}/
+        output: "{input.codeBase}/{input.taskId}/component-{input.componentIndex}"
+        checkpoint: true

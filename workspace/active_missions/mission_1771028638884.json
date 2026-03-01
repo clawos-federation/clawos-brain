@@ -1,0 +1,9 @@
+{
+  "mission_id": "mission_1771028638884",
+  "timestamp": "2026-02-14T00:23:58.884Z",
+  "intent": "Execute a comprehensive physical and logic audit of all core agents in /workspace/agents and ensure 7.6 compliance.",
+  "assigned_agent": "gm",
+  "complexity_score": 0.7000000000000001,
+  "status": "LOCKED",
+  "expected_outcome": "Physical modification of target files or creation of new assets."
+}

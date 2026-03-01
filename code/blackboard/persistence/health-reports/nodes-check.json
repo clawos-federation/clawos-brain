@@ -1,0 +1,223 @@
+{
+  "timestamp": "2026-02-28T11:20:00.952743+00:00",
+  "check_type": "nodes",
+  "total_nodes": 17,
+  "healthy_count": 17,
+  "unhealthy_count": 0,
+  "nodes": [
+    {
+      "name": "assistant",
+      "tier": "command",
+      "model": "glm-5",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    },
+    {
+      "name": "gm",
+      "tier": "command",
+      "model": "opus-4-6",
+      "dir_exists": true,
+      "status_files": [
+        "status.md",
+        "decisions.md"
+      ],
+      "missing_files": [],
+      "last_updated": "2026-02-24T15:24:38.249850+00:00",
+      "healthy": true
+    },
+    {
+      "name": "validator",
+      "tier": "command",
+      "model": "opus-4-6",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    },
+    {
+      "name": "platform-pm",
+      "tier": "pm",
+      "model": "glm-5",
+      "dir_exists": true,
+      "status_files": [
+        "status.md",
+        "decisions.md"
+      ],
+      "missing_files": [],
+      "last_updated": "2026-02-24T01:13:14.459670+00:00",
+      "healthy": true
+    },
+    {
+      "name": "coding-pm",
+      "tier": "pm",
+      "model": "glm-5",
+      "dir_exists": true,
+      "status_files": [
+        "status.md",
+        "decisions.md",
+        "team-assignments.json"
+      ],
+      "missing_files": [],
+      "last_updated": "2026-02-24T15:24:13.493218+00:00",
+      "healthy": true
+    },
+    {
+      "name": "writing-pm",
+      "tier": "pm",
+      "model": "glm-5",
+      "dir_exists": true,
+      "status_files": [
+        "status.md",
+        "decisions.md",
+        "team-assignments.json"
+      ],
+      "missing_files": [],
+      "last_updated": "2026-02-24T15:24:22.330062+00:00",
+      "healthy": true
+    },
+    {
+      "name": "coder-frontend",
+      "tier": "worker",
+      "model": "codex-oauth",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    },
+    {
+      "name": "coder-backend",
+      "tier": "worker",
+      "model": "codex-oauth",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    },
+    {
+      "name": "tester-auto",
+      "tier": "worker",
+      "model": "codex-oauth",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    },
+    {
+      "name": "writer-general",
+      "tier": "worker",
+      "model": "glm-5",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    },
+    {
+      "name": "researcher-web",
+      "tier": "worker",
+      "model": "glm-5",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    },
+    {
+      "name": "reviewer-content",
+      "tier": "worker",
+      "model": "glm-5",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    },
+    {
+      "name": "sreagent",
+      "tier": "worker",
+      "model": "codex-oauth",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    },
+    {
+      "name": "securityagent",
+      "tier": "worker",
+      "model": "codex-oauth",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    },
+    {
+      "name": "github-ops",
+      "tier": "worker",
+      "model": "codex-oauth",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    },
+    {
+      "name": "alpha-bridge",
+      "tier": "worker",
+      "model": "glm-5",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    },
+    {
+      "name": "browser-worker",
+      "tier": "worker",
+      "model": "glm-5",
+      "dir_exists": true,
+      "status_files": [],
+      "missing_files": [],
+      "last_updated": null,
+      "healthy": true
+    }
+  ],
+  "heartbeat": {
+    "exists": true,
+    "healthy": false,
+    "last_checks": {
+      "blackboard": 1772118150,
+      "workflows": 1772118150,
+      "health": 1772118150
+    },
+    "stale": true,
+    "version": "1.0.0",
+    "initialized_at": "2026-02-24T15:30:00Z"
+  },
+  "tier_summary": {
+    "command": {
+      "total": 3,
+      "healthy": 3
+    },
+    "pm": {
+      "total": 3,
+      "healthy": 3
+    },
+    "worker": {
+      "total": 11,
+      "healthy": 11
+    }
+  },
+  "healthy": false,
+  "critical_issues": [
+    "Heartbeat is stale (>1 hour old)"
+  ]
+}

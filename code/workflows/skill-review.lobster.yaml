@@ -1,0 +1,72 @@
+# Skill Review Workflow
+# 技能审查工作流
+
+name: skill-review
+description: 四级审批的技能创建/修改审查流程
+
+stages:
+  - id: proposal
+    name: 提案阶段
+    agent: any-pm
+    actions:
+      - create_proposal
+      - write_to_blackboard
+    output: ~/clawos/blackboard/proposals/skills-proposal/
+    
+  - id: technical-review
+    name: 技术审查
+    agent: platform-pm
+    timeout: 48h
+    checks:
+      - permission_validity
+      - security_assessment
+      - compatibility_check
+    actions:
+      - review_proposal
+      - write_assessment
+    on_reject: notify_proposer
+    
+  - id: architecture-review
+    name: 架构审查
+    agent: gm
+    timeout: 48h
+    checks:
+      - design_quality
+      - maintainability
+      - system_impact
+    actions:
+      - review_technical_assessment
+      - write_architecture_opinion
+    on_reject: notify_platform_pm
+    
+  - id: human-approval
+    name: 人类审批
+    agent: human
+    timeout: 72h
+    actions:
+      - final_review
+      - approve_or_reject
+    on_approve: proceed_to_install
+    on_reject: notify_all
+    
+  - id: installation
+    name: 安装部署
+    agent: platform-pm
+    actions:
+      - create_skill_directory
+      - install_skill_files
+      - update_manifest
+      - notify_completion
+    post_install:
+      - monitor_window: 24h
+      - rollback_on_failure: true
+
+rollback:
+  trigger:
+    - error_rate_spike
+    - security_incident
+    - performance_degradation
+  actions:
+    - remove_skill
+    - restore_backup
+    - notify_stakeholders
