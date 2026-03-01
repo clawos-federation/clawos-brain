@@ -1,0 +1,11 @@
+name: Health Check
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    uses: clawos-federation/clawos-actions/.github/workflows/health-check.yml@main
+    secrets: inherit

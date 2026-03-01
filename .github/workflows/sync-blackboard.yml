@@ -1,0 +1,11 @@
+name: Sync Blackboard
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    uses: clawos-federation/clawos-actions/.github/workflows/blackboard-backup.yml@main
+    secrets: inherit
